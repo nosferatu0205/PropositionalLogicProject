@@ -12,7 +12,8 @@ kb=[]
 
 actions = []
 
-current_status = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+#current_status = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+current_status = [[0 for _ in range(10)] for _ in range(10)]
 allowed_moves = [[0,1],[0,-1],[1,0],[-1,0]]                     
 moves = ['Up','Down','Right','Left']
 moves_taken = []
@@ -126,7 +127,7 @@ def literal_expr(expr):
         for d in c:
             return d[0]
  
-
+"""
 def dpll(expr):   
     global total_count
     total_count+=1       
@@ -224,6 +225,73 @@ def dpll(expr):
 
         return False
     return None
+"""
+
+def dpll(expr):
+    global total_count
+    total_count += 1
+
+    ps = pure_symbols(expr)
+
+    if len(ps) != 0:
+        expr_new = [c for c in expr if not any(k in ps for k in c)]
+    else:
+        expr_new = expr[:]
+
+    polarity, uc = unit_clauses(expr_new)
+    if not polarity:
+        return False
+
+    if len(uc) != 0:
+        for i in uc:
+            expr_new.remove(i)
+
+        to_change = []
+        for k in expr_new:
+            to_add = True
+            for j in k:
+                for i in uc:
+                    if any(z == j for z in i):
+                        to_add = False
+                        break
+                if not to_add:
+                    break
+            if to_add:
+                to_change.append(k)
+
+        for i in uc:
+            new_one = {(k[0], 1 - k[1]) for k in i}
+            to_change = [c.difference(new_one) for c in to_change]
+
+        expr_new = to_change[:]
+
+    if not expr_new:
+        return True
+
+    if any(len(c) == 0 for c in expr_new):
+        return False
+
+    if expr_new != expr:
+        return dpll(expr_new)
+    else:
+        cnf = expr_new[:]
+        l = literal_expr(cnf)
+        expr_new_one = [c for c in cnf if (l, 1) not in c]
+        expr_new_one = [c.difference({(l, 0)}) for c in expr_new_one]
+        done = dpll(expr_new_one)
+        if done:
+            return done
+
+        expr_new_one = [c for c in cnf if (l, 0) not in c]
+        expr_new_one = [c.difference({(l, 1)}) for c in expr_new_one]
+        done = dpll(expr_new_one)
+        if done:
+            return done
+
+        return False
+
+    return None
+
 
 def pure_symbols(expr):
     symbols = set()

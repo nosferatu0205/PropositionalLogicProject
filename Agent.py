@@ -10,7 +10,8 @@ class Agent:
 
         # Generate pit locations
         pit_count = 0
-        while pit_count < 20:  # 20 pits in total (2 pits for every 10 cells)
+        pit_count_iterator = random.randint(0, 20)
+        while pit_count < pit_count_iterator:  # 20 pits in total (2 pits for every 10 cells)
             row = random.randint(0, 9)
             col = random.randint(0, 9)
 
