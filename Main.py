@@ -377,7 +377,11 @@ def simulation(ag):
 def main():
     ag = Agent()
     initialize(ag)
+    print("Generated Wumpus World:")
+    for row in ag._wumpusWorld:
+        print(" ".join(row))
     simulation(ag)
+
 
 
 if __name__=='__main__':

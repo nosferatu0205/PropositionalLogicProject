@@ -1,18 +1,23 @@
-
+import random
 class Agent:
     def __init__(self):
-        self._wumpusWorld = [
-                 ['','','','','','','','','',''],
-                 ['','W','P','','','','','','',''],
-                 ['','','','','','P','','','',''],
-                 ['', '', 'P', '', '', '', '', '', 'P', ''],
-                 ['', '', 'P', '', '', '', '', '', 'P', ''],
-                 ['', '', '', '', 'P', '', '', '', '', ''],
-                 ['', '', '', '', '', '', '', '', '', ''],
-                 ['', '', '', 'P', '', '', '', '', '', ''],
-                 ['', '', '', '', '', 'P', '', '', 'P', ''],
-                 ['', 'P', '', '', '', 'P', '', '', '', ''],
-                ]
+        self._wumpusWorld = [['' for _ in range(10)] for _ in range(10)]
+
+        # Generate Wumpus location
+        wumpus_row = random.randint(0, 9)
+        wumpus_col = random.randint(0, 9)
+        self._wumpusWorld[wumpus_row][wumpus_col] = 'W'
+
+        # Generate pit locations
+        pit_count = 0
+        while pit_count < 20:  # 20 pits in total (2 pits for every 10 cells)
+            row = random.randint(0, 9)
+            col = random.randint(0, 9)
+
+            # Ensure the cell is empty and not the Wumpus location
+            if self._wumpusWorld[row][col] == '' and not (row == wumpus_row and col == wumpus_col):
+                self._wumpusWorld[row][col] = 'P'
+                pit_count += 1
         self._curLoc = [1,1]
         self._isAlive = True
         self._hasExited = False
