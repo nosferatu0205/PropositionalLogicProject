@@ -1,0 +1,108 @@
+.bg{
+    background-color:#EEA47F;
+    overflow:hidden;
+}
+.btnCnt{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    row-gap: 40px;
+    
+}
+.ttl.txt{
+    font-family: 'Lakki Reddy', cursive;
+    color:#3c6991;
+    animation: tilt-shaking 5s cubic-bezier(.36,.07,.19,.97) both;
+    animation-iteration-count: infinite;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+.fhvr:hover{
+    box-shadow: rgba(0, 0, 0, 0.65) 0px 10px 30px;
+}
+.itembtnbg{
+    cursor: default;
+    display: flex;
+    background-color: #00539C;
+    width: 463px;
+    height: 100px;
+    border-radius: 20px;
+    border: solid;
+    border-color: #CCF381;
+    border-width:  10px 18px 10px 18px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+    
+}
+/* CCF381 */
+.itembtnbg1{
+    cursor: default;
+    display: flex;
+    background-color: #00539C;
+    width: 249px;
+    height: 100px;
+    border-radius: 20px;
+    border: solid;
+    border-color: #CCF381;
+    border-width:  10px 18px 10px 18px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    justify-content: center;
+    align-items: center;
+
+}
+.txt{
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+    color: #FDF6E4;
+}
+
+.fhvr:hover {
+    animation: shake 0.1s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  @keyframes shake {
+    10%, 90% {
+      transform: translate3d(0px, -2px, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(0px, 2px, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(0px, -2px, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(0px, 2px, 0);
+    }
+  }
+
+ 
+  
+  @keyframes tilt-shaking {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(0eg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+  }
+.mons{
+    width:1000000px;
+    height: 102343px;
+    background-color: aliceblue;
+}
+

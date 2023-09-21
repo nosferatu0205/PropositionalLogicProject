@@ -1,0 +1,136 @@
+.container{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    align-content: flex-start;
+    justify-content: flex-start;
+    column-gap: 10px;
+   
+}
+.board{
+    background-color: rgb(59, 37, 27);
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(10, 55px);
+    grid-template-rows: repeat(10, 55px);
+    grid-gap: 5px;
+    padding-left: 2.5px;
+    padding-top: 4.5px;
+  }
+
+  .sss {
+    max-width: 55px;
+    max-height: 55px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: Arial;
+    font-size: 3rem;
+    font-weight: bold;
+    /* background: white; */
+    background-size: 100% ;  
+    background-size: cover;  
+    background-image:url("../../assets/grass.jpg");
+  }
+.scrboard{
+    background-color: rgb(207, 207, 120);
+    width: 200px;
+    height: 200px;
+}
+.mind{
+  background-color: rgb(255, 255, 255);
+  width: 200px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.walls{
+    max-height: 55px;
+    max-width: 55px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+}
+.stuffC{
+  max-width: 85px;
+  max-height: 85px;
+  overflow: hidden;
+}
+.char {
+  width: calc(55px*30px);
+  height: 80px;
+  right: 24%;
+  top: 2%;
+  align-items:baseline;
+  position: relative;
+  animation: moveSpritesheet 1s steps(30) infinite;
+}
+@keyframes moveSpritesheet {
+  from {
+     transform: translate3d(0px,0,0)
+  }
+  to {
+     transform: translate3d(-100%,0,0)
+  }
+}
+/* .char img{
+  width: inherit;
+  height: inherit;
+} */
+.stuff{
+  max-width: 55px;
+  max-height: 55px;
+  display:flex;
+}
+.wumpus{
+  max-width: 55px;
+  max-height: 55px;
+  align-items: center;
+  align-content: center;
+
+}
+.itembtnbg1{
+  cursor: default;
+  display: flex;
+  background-color: #00539C;
+  width: 100px;
+  height: 32px;
+  border-radius: 5px;
+  border: solid;
+  border-color: #CCF381;
+  border-width:  5px 9px 5px 9px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+
+}
+.txt{
+  font-family: 'Roboto', sans-serif;
+  font-size: 32px;
+  color: git #FDF6E4;
+}
+.txt1{
+  font-family: 'Roboto', sans-serif;
+  font-size: 30px;
+  color: #000000;
+}
+.wumpus2{
+  font-size: 15px;
+  color:rgb(207, 207, 120)
+}
+.dd{
+  max-width: 280px;
+  max-height: 30px; 
+  font-size: 10px;
+}
+.sd{
+
+}
