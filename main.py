@@ -2,7 +2,7 @@ import random
 import pygame
 
 # Define constants
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
 
@@ -17,7 +17,11 @@ BROWN = (139, 69, 19)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Wumpus World")
-
+font = pygame.font.Font(None, 36)
+text = "Working?"
+restart_button = pygame.Rect(325, 900, 150, 50)
+# text_box = pygame.Rect(300, 820, 200, 50)
+restart_color = BLACK
 
 
 class WumpusWorld:
@@ -121,6 +125,8 @@ class WumpusWorld:
            (col > 0 and self.gold_position == (row, col - 1)) or \
            (col < self.size - 1 and self.gold_position == (row, col + 1)):
             percepts.append('Glint')
+            
+        text = str(percepts)
 
         return percepts
 
@@ -138,6 +144,20 @@ class WumpusWorld:
                 else:
                     print("-", end=" ")
             print()
+            
+    def draw_text(self, color, text, x, y):
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (x, y)
+        screen.blit(text_surface, text_rect)
+        
+    def draw_text2(self, color, text, x, y):
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        x = (WIDTH - text_rect.width) // 2
+        text_rect.topleft = (x, y)
+        screen.blit(text_surface, text_rect)
+        
     def draw(self, screen):
         for row in range(GRID_SIZE):
             for col in range(GRID_SIZE):
@@ -157,6 +177,15 @@ class WumpusWorld:
                 else:
                     pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
+                
+        # pygame.draw.rect(screen, BLACK, text_box)
+        # pygame.draw.rect(screen, GREEN, text_box, 2)
+        self.draw_text2( BLACK ,text, 360, 825)        
+
+        # Draw the restart button
+        pygame.draw.rect(screen, restart_color, restart_button)
+        pygame.draw.rect(screen, BLACK, restart_button, 2)
+        self.draw_text( GREEN ,"Restart", 360, 914)
 
     def move_agent(self, action):
         row, col = self.agent_position
@@ -198,30 +227,32 @@ class WumpusWorld:
 
         return False, ""
 
-    def get_percepts(self):
-        percepts = []
+    # def get_percepts(self):
+    #     percepts = []
 
-        row, col = self.agent_position
+    #     row, col = self.agent_position
 
-        # Check for Breeze (pit nearby)
-        if (row > 0 and self.grid[row - 1][col] == 'P') or \
-           (row < GRID_SIZE - 1 and self.grid[row + 1][col] == 'P') or \
-           (col > 0 and self.grid[row][col - 1] == 'P') or \
-           (col < GRID_SIZE - 1 and self.grid[row][col + 1] == 'P'):
-            percepts.append('Breeze')
+    #     # Check for Breeze (pit nearby)
+    #     if (row > 0 and self.grid[row - 1][col] == 'P') or \
+    #        (row < GRID_SIZE - 1 and self.grid[row + 1][col] == 'P') or \
+    #        (col > 0 and self.grid[row][col - 1] == 'P') or \
+    #        (col < GRID_SIZE - 1 and self.grid[row][col + 1] == 'P'):
+    #         percepts.append('Breeze')
 
-        # Check for Stench (Wumpus nearby)
-        if (row > 0 and self.wumpus_position == (row - 1, col)) or \
-           (row < GRID_SIZE - 1 and self.wumpus_position == (row + 1, col)) or \
-           (col > 0 and self.wumpus_position == (row, col - 1)) or \
-           (col < GRID_SIZE - 1 and self.wumpus_position == (row, col + 1)):
-            percepts.append('Stench')
+    #     # Check for Stench (Wumpus nearby)
+    #     if (row > 0 and self.wumpus_position == (row - 1, col)) or \
+    #        (row < GRID_SIZE - 1 and self.wumpus_position == (row + 1, col)) or \
+    #        (col > 0 and self.wumpus_position == (row, col - 1)) or \
+    #        (col < GRID_SIZE - 1 and self.wumpus_position == (row, col + 1)):
+    #         percepts.append('Stench')
 
-        # Check for Glitter (gold nearby)
-        if (row, col) == self.gold_position:
-            percepts.append('Glitter')
+    #     # Check for Glitter (gold nearby)
+    #     if (row, col) == self.gold_position:
+    #         percepts.append('Glitter')
+        
+    #     # text = str(percepts)
 
-        return percepts
+    #     return percepts
 # Main game loop
 if __name__ == "__main__":
     world = WumpusWorld()
@@ -235,7 +266,8 @@ if __name__ == "__main__":
        # for row in range(GRID_SIZE):
           #  print(" ".join(world.grid[row]))
         print("Arrows left:", world.arrows)
-        percepts = world.get_percepts()
+        percepts = list(set(world.get_percepts()))
+        text = str(percepts)
         print("Percepts:", percepts)
         game_over, result_message = world.is_game_over()
         for event in pygame.event.get():
@@ -257,7 +289,14 @@ if __name__ == "__main__":
                 elif world.is_game_over():
                     game_over, result_message = world.is_game_over()
                     print("\nGame Over:", result_message)
-
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if restart_button.collidepoint(event.pos):
+                        # Restart the game when the restart button is clicked
+                        world = WumpusWorld()
+                        world.initialize()
+                        text = "restarted"
+                \
 
 
 
