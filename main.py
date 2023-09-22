@@ -30,7 +30,7 @@ class WumpusWorld:
         self.num_gold = num_gold
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.agent_position = (0, 0)
-
+        self.point =0
         self.num_wumpus = num_wumpus
         self.arrows = 1
         self.visited = set()
@@ -48,7 +48,7 @@ class WumpusWorld:
             gold_position = self.random_empty_position()
 
             # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a pit
-            if self.grid[gold_position[0]][gold_position[1]] != 'P' and self.grid[gold_position[0]][gold_position[1]] != 'W':
+            if self.grid[gold_position[0]][gold_position[1]] != 'P' and self.grid[gold_position[0]][gold_position[1]] != 'W' and gold_position != (0,0):
                 self.grid[gold_position[0]][gold_position[1]] = 'G'
                 gold_placed += 1
 
@@ -93,6 +93,9 @@ class WumpusWorld:
         elif action == 'down' and row < self.size - 1:
             self.agent_position = (row + 1, col)
 
+
+
+
     def shoot_arrow(self):
         if self.arrows > 0:
             self.arrows -= 1
@@ -104,17 +107,21 @@ class WumpusWorld:
                 return False  # Arrow missed
         else:
             return False  # No arrows left
-    def is_game_over(self):
+    def is_game_over(self, manualoverride =False):
+        if manualoverride:
+            return True, "Game is over"
         row, col = self.agent_position
 
         if self.grid[row][col] == 'W':
             return True, "Agent was eaten by the Wumpus!"
         elif self.grid[row][col] == 'G':
-            return True, "Agent found the gold and climbed out of the cave with +1000 points!"
+            return False, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
             return True, "Agent fell into a pit and lost -1000 points!"
         elif self.arrows == 0 and 'W' in [self.grid[r][c] for r, c in self.get_adjacent_cells(row, col)]:
             return True, "Agent ran out of arrows and couldn't kill the Wumpus."
+
+
 
         return False, ""
 
@@ -207,20 +214,6 @@ class WumpusWorld:
         pygame.draw.rect(screen, BLACK, restart_button, 2)
         self.draw_text( GREEN ,"Restart", 360, 914)
 
-    def move_agent(self, action):
-        row, col = self.agent_position
-
-        if action == 'left' and col > 0:
-            self.agent_position = (row, col - 1)
-        elif action == 'right' and col < GRID_SIZE - 1:
-            self.agent_position = (row, col + 1)
-        elif action == 'up' and row > 0:
-            self.agent_position = (row - 1, col)
-        elif action == 'down' and row < GRID_SIZE - 1:
-            self.agent_position = (row + 1, col)
-
-        self.visited.add(self.agent_position)
-
     def shoot_arrow(self):
         if self.arrows > 0:
             self.arrows -= 1
@@ -243,6 +236,9 @@ if __name__ == "__main__":
         world.draw(screen)
         pygame.display.flip()
         game_over, result_message = world.is_game_over()
+
+        if result_message == "Agent fell into a pit and lost -1000 points!":
+            world.point-=1000
         if game_over:
             print("\nGame Over:", result_message)
             running= False
@@ -255,6 +251,7 @@ if __name__ == "__main__":
         percepts = list(set(world.get_percepts()))
         text = str(percepts)
         print("Percepts:", percepts)
+        print("points: ", world.point)
        # game_over, result_message = world.is_game_over()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -263,16 +260,31 @@ if __name__ == "__main__":
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     world.move_agent('left')
+                    world.point-=1
                 elif event.key == pygame.K_RIGHT:
                     world.move_agent('right')
+                    world.point-=1
                 elif event.key == pygame.K_UP:
                     world.move_agent('up')
+                    world.point-=1
                 elif event.key == pygame.K_DOWN:
                     world.move_agent('down')
+                    world.point-=1
                 elif event.key == pygame.K_SPACE:
                     wumpus_killed = world.shoot_arrow()
+                    world.point-=10
                     if wumpus_killed:
                         print("Agent killed the Wumpus!")
+                elif event.key == pygame.K_0 and world.agent_position == (0, 0):
+                    running = False
+                elif event.key == pygame.K_g:
+                    # Allow the agent to pick up gold when 'G' key is pressed
+                    row, col = world.agent_position
+                    if world.grid[row][col] == 'G':
+                        world.grid[row][col] = None  # Remove gold from the current cell
+                        world.num_gold -= 1
+                        world.point += 1000
+
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
