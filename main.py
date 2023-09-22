@@ -118,11 +118,6 @@ class WumpusWorld:
             return False, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
             return True, "Agent fell into a pit and lost -1000 points!"
-        elif self.arrows == 0 and 'W' in [self.grid[r][c] for r, c in self.get_adjacent_cells(row, col)]:
-            return True, "Agent ran out of arrows and couldn't kill the Wumpus."
-
-
-
         return False, ""
 
     def get_percepts(self):
@@ -214,17 +209,6 @@ class WumpusWorld:
         pygame.draw.rect(screen, BLACK, restart_button, 2)
         self.draw_text( GREEN ,"Restart", 360, 914)
 
-    def shoot_arrow(self):
-        if self.arrows > 0:
-            self.arrows -= 1
-            row, col = self.agent_position
-
-            if self.grid[row][col] == 'W':
-                return True  # Wumpus is killed
-            else:
-                return False  # Arrow missed
-        else:
-            return False  # No arrows left
 
 # Main game loop
 if __name__ == "__main__":
@@ -270,27 +254,31 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_DOWN:
                     world.move_agent('down')
                     world.point-=1
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE and world.arrows>0:
                     row, col = world.agent_position
                     if world.grid[row-1][col] == 'W':
                         world.grid[row-1][col] = None
                         world.num_wumpus -=1
                         world.point-=10
+                        world.arrows-=1
                         print("Agent killed the Wumpus!")
                     elif world.grid[row+1][col] == 'W':
                         world.grid[row+1][col] = None
                         world.num_wumpus -=1
                         world.point-=10
+                        world.arrows-=1
                         print("Agent killed the Wumpus!")
                     elif world.grid[row][col+1] == 'W':
                         world.grid[row][col+1] = None
                         world.num_wumpus -=1
                         world.point-=10
+                        world.arrows-=1
                         print("Agent killed the Wumpus!")
                     elif world.grid[row][col-1] == 'W':
                         world.grid[row][col-1] = None
                         world.num_wumpus -=1
                         world.point-=10
+                        world.arrows-=1
                         print("Agent killed the Wumpus!")
                 elif event.key == pygame.K_0 and world.agent_position == (0, 0):
                     running = False
