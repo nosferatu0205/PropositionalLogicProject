@@ -188,7 +188,7 @@ class WumpusWorld:
                 y = row * CELL_SIZE
                 _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
                 screen.blit(IMAGES["grass"], _rect)
-
+                
                 if (row, col) == self.agent_position:
                     pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
                     pygame.draw.circle(screen, GREEN, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
@@ -196,8 +196,45 @@ class WumpusWorld:
                     screen.blit(IMAGES["coin"], _rect)
                 elif self.grid[row][col] == 'W':
                     screen.blit(IMAGES["wumpus"], _rect)
+                    # pygame.draw.rect(screen, GOLD, (x+CELL_SIZE, y + CELL_SIZE, CELL_SIZE, CELL_SIZE), 5)
                 elif self.grid[row][col] == 'P':
                     screen.blit(IMAGES["hole"], _rect)
+                pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
+        
+        for row in range(GRID_SIZE):
+            for col in range(GRID_SIZE):
+                x = col * CELL_SIZE
+                y = row * CELL_SIZE
+                _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
+                rect_right = pygame.Rect(x+CELL_SIZE, y, CELL_SIZE, CELL_SIZE)
+                rect_left = pygame.Rect(x-CELL_SIZE, y, CELL_SIZE, CELL_SIZE)
+                rect_up = pygame.Rect(x, y-CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                rect_down = pygame.Rect(x, y+CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                
+
+                # elif self.grid[row][col] == 'G':
+                    # screen.blit(IMAGES["coin"], _rect)
+                if self.grid[row][col] == 'W':
+                    img = "smell"
+                    if col < 9:
+                        screen.blit(IMAGES[img], rect_right)
+                    if col > 0:
+                        screen.blit(IMAGES[img], rect_left)
+                    if row > 0:
+                        screen.blit(IMAGES[img], rect_up)
+                    if row < 9:
+                        screen.blit(IMAGES[img], rect_down)
+                    # pygame.draw.rect(screen, GOLD, (x+CELL_SIZE, y + CELL_SIZE, CELL_SIZE, CELL_SIZE), 5)
+                elif self.grid[row][col] == 'P':
+                    img = "breeze"
+                    if col < 9:
+                        screen.blit(IMAGES[img], rect_right)
+                    if col > 0:
+                        screen.blit(IMAGES[img], rect_left)
+                    if row > 0:
+                        screen.blit(IMAGES[img], rect_up)
+                    if row < 9:
+                        screen.blit(IMAGES[img], rect_down)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
                 
         # pygame.draw.rect(screen, BLACK, text_box)
