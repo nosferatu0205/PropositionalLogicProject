@@ -51,7 +51,8 @@ class WumpusWorld:
             for col in range(self.size):
                 if (row, col) != self.agent_position and (row, col) != self.gold_position and (row, col) != self.wumpus_position:
                     if random.random() < self.pit_probability:
-                        self.grid[row][col] = 'P'
+                        if row != 1 and col != 1:
+                            self.grid[row][col] = 'P'
 
     def random_empty_position(self):
         while True:
@@ -227,32 +228,6 @@ class WumpusWorld:
 
         return False, ""
 
-    # def get_percepts(self):
-    #     percepts = []
-
-    #     row, col = self.agent_position
-
-    #     # Check for Breeze (pit nearby)
-    #     if (row > 0 and self.grid[row - 1][col] == 'P') or \
-    #        (row < GRID_SIZE - 1 and self.grid[row + 1][col] == 'P') or \
-    #        (col > 0 and self.grid[row][col - 1] == 'P') or \
-    #        (col < GRID_SIZE - 1 and self.grid[row][col + 1] == 'P'):
-    #         percepts.append('Breeze')
-
-    #     # Check for Stench (Wumpus nearby)
-    #     if (row > 0 and self.wumpus_position == (row - 1, col)) or \
-    #        (row < GRID_SIZE - 1 and self.wumpus_position == (row + 1, col)) or \
-    #        (col > 0 and self.wumpus_position == (row, col - 1)) or \
-    #        (col < GRID_SIZE - 1 and self.wumpus_position == (row, col + 1)):
-    #         percepts.append('Stench')
-
-    #     # Check for Glitter (gold nearby)
-    #     if (row, col) == self.gold_position:
-    #         percepts.append('Glitter')
-        
-    #     # text = str(percepts)
-
-    #     return percepts
 # Main game loop
 if __name__ == "__main__":
     world = WumpusWorld()
@@ -296,7 +271,7 @@ if __name__ == "__main__":
                         world = WumpusWorld()
                         world.initialize()
                         text = "restarted"
-                \
+
 
 
 
