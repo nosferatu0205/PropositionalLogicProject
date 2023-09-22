@@ -1,5 +1,6 @@
 import random
 import pygame
+import numpy
 
 # Define constants
 WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
@@ -23,7 +24,7 @@ restart_button = pygame.Rect(325, 900, 150, 50)
 # text_box = pygame.Rect(300, 820, 200, 50)
 restart_color = BLACK
 IMAGES = {}
-
+wall_check = numpy.zeros((10,10), dtype=bool)
 
 class WumpusWorld:
     def __init__(self, size=10, num_pits= 20, num_wumpus=5, num_gold =4):
@@ -87,12 +88,16 @@ class WumpusWorld:
 
         if action == 'left' and col > 0:
             self.agent_position = (row, col - 1)
+            wall_check[row, col-1] = True
         elif action == 'right' and col < self.size - 1:
             self.agent_position = (row, col + 1)
+            wall_check[row, col+1] = True
         elif action == 'up' and row > 0:
             self.agent_position = (row - 1, col)
+            wall_check[row-1, col] = True
         elif action == 'down' and row < self.size - 1:
             self.agent_position = (row + 1, col)
+            wall_check[row+1, col] = True
 
 
 
@@ -237,6 +242,13 @@ class WumpusWorld:
                         screen.blit(IMAGES[img], rect_down)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
                 
+        for row in range(GRID_SIZE):
+            for col in range(GRID_SIZE):
+                x = col * CELL_SIZE
+                y = row * CELL_SIZE
+                _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
+                if (row != 0 or col != 0) and wall_check[row,col] == False :
+                    screen.blit(IMAGES["wall"], _rect)
         # pygame.draw.rect(screen, BLACK, text_box)
         # pygame.draw.rect(screen, GREEN, text_box, 2)
         self.draw_text2( BLACK ,text, 360, 825)        
