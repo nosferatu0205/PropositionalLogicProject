@@ -59,7 +59,7 @@ class WumpusWorld:
             wumpus_position = self.random_empty_position()
 
             # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a pit
-            if wumpus_position[1] != 1 and wumpus_position[0] != 1 and self.grid[wumpus_position[0]][wumpus_position[1]] != 'P':
+            if wumpus_position != (0,0) and wumpus_position != (0,1) and wumpus_position != (1,0) and self.grid[wumpus_position[0]][wumpus_position[1]] != 'P':
                 self.grid[wumpus_position[0]][wumpus_position[1]] = 'W'
                 wumpus_placed += 1
 
@@ -70,7 +70,7 @@ class WumpusWorld:
             pit_position = self.random_empty_position()
 
             # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a Wumpus
-            if pit_position[0] != 1 and pit_position[1] != 1 and self.grid[pit_position[0]][pit_position[1]] != 'W':
+            if pit_position != (0, 0) and pit_position != (0, 1)  and pit_position != (1, 0) and self.grid[pit_position[0]][pit_position[1]] != 'W':
                 self.grid[pit_position[0]][pit_position[1]] = 'P'
                 pits_placed += 1
 
@@ -104,7 +104,6 @@ class WumpusWorld:
                 return False  # Arrow missed
         else:
             return False  # No arrows left
-
     def is_game_over(self):
         row, col = self.agent_position
 
@@ -114,7 +113,7 @@ class WumpusWorld:
             return True, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
             return True, "Agent fell into a pit and lost -1000 points!"
-        elif self.arrows == 0 and self.grid[row][col] != 'W':
+        elif self.arrows == 0 and 'W' in [self.grid[r][c] for r, c in self.get_adjacent_cells(row, col)]:
             return True, "Agent ran out of arrows and couldn't kill the Wumpus."
 
         return False, ""
@@ -234,20 +233,6 @@ class WumpusWorld:
         else:
             return False  # No arrows left
 
-    def is_game_over(self):
-        row, col = self.agent_position
-
-        if self.grid[row][col] == 'G':
-            return True, "Agent found the gold and climbed out of the cave with +1000 points!"
-        elif self.grid[row][col] == 'P':
-            return True, "Agent fell into a pit and lost -1000 points!"
-        elif self.grid[row][col] == 'W':
-            return True, "Agent was eaten by the Wumpus."
-        elif self.arrows == 0 and self.grid[row][col] == 'W':
-            return True, "Agent ran out of arrows and couldn't kill the Wumpus."
-
-        return False, ""
-
 # Main game loop
 if __name__ == "__main__":
     world = WumpusWorld()
@@ -257,6 +242,12 @@ if __name__ == "__main__":
         screen.fill(WHITE)
         world.draw(screen)
         pygame.display.flip()
+        game_over, result_message = world.is_game_over()
+        if game_over:
+            print("\nGame Over:", result_message)
+            running= False
+            # todo: game over hoile game theke ber hoye jay, eita solve korte hobe
+
         print("\nCurrent world:")
        # for row in range(GRID_SIZE):
           #  print(" ".join(world.grid[row]))
@@ -264,10 +255,11 @@ if __name__ == "__main__":
         percepts = list(set(world.get_percepts()))
         text = str(percepts)
         print("Percepts:", percepts)
-        game_over, result_message = world.is_game_over()
+       # game_over, result_message = world.is_game_over()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     world.move_agent('left')
@@ -281,9 +273,7 @@ if __name__ == "__main__":
                     wumpus_killed = world.shoot_arrow()
                     if wumpus_killed:
                         print("Agent killed the Wumpus!")
-                elif world.is_game_over():
-                    game_over, result_message = world.is_game_over()
-                    print("\nGame Over:", result_message)
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if restart_button.collidepoint(event.pos):
