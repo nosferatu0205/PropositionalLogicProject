@@ -22,6 +22,7 @@ text = "Working?"
 restart_button = pygame.Rect(325, 900, 150, 50)
 # text_box = pygame.Rect(300, 820, 200, 50)
 restart_color = BLACK
+IMAGES = {}
 
 
 class WumpusWorld:
@@ -39,7 +40,7 @@ class WumpusWorld:
     def initialize(self):
         # Place the agent in the starting position
         self.agent_position = (0, 0)
-        self.arrows = 1
+        self.arrows = self.num_wumpus
 
         # Randomly place the gold
         gold_placed = 0
@@ -185,19 +186,18 @@ class WumpusWorld:
             for col in range(GRID_SIZE):
                 x = col * CELL_SIZE
                 y = row * CELL_SIZE
+                _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
+                screen.blit(IMAGES["grass"], _rect)
 
                 if (row, col) == self.agent_position:
                     pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
                     pygame.draw.circle(screen, GREEN, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
                 elif self.grid[row][col] == 'G':
-                    pygame.draw.rect(screen, GOLD, (x, y, CELL_SIZE, CELL_SIZE))
+                    screen.blit(IMAGES["coin"], _rect)
                 elif self.grid[row][col] == 'W':
-                    pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
-                    pygame.draw.circle(screen, BLACK, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
+                    screen.blit(IMAGES["wumpus"], _rect)
                 elif self.grid[row][col] == 'P':
-                    pygame.draw.rect(screen, BROWN, (x, y, CELL_SIZE, CELL_SIZE))
-                else:
-                    pygame.draw.rect(screen, WHITE, (x, y, CELL_SIZE, CELL_SIZE))
+                    screen.blit(IMAGES["hole"], _rect)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
                 
         # pygame.draw.rect(screen, BLACK, text_box)
@@ -209,9 +209,15 @@ class WumpusWorld:
         pygame.draw.rect(screen, BLACK, restart_button, 2)
         self.draw_text( GREEN ,"Restart", 360, 914)
 
+def load_images():
+    pics = ["agent_down", "agent_left", "agent_right", "agent_up", "breeze", "coin", "glitter", "grass", "hole", "smell", "wall", "wumpus" , "wumpus_dead"]
+    for pic in pics:
+        IMAGES[pic] = pygame.transform.scale(pygame.image.load(f"./Asset/{pic}.png"), (CELL_SIZE, CELL_SIZE))
+    
 
 # Main game loop
 if __name__ == "__main__":
+    load_images()
     world = WumpusWorld()
     world.initialize()
     running = True
