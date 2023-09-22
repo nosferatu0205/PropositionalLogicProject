@@ -25,15 +25,16 @@ restart_color = BLACK
 
 
 class WumpusWorld:
-    def __init__(self, size=10, pit_probability=0.2):
+    def __init__(self, size=10, num_pits= 20, num_wumpus=5, num_gold =4):
         self.size = size
-        self.pit_probability = pit_probability
+        self.num_gold = num_gold
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.agent_position = (0, 0)
-        self.gold_position = None
-        self.wumpus_position = None
+
+        self.num_wumpus = num_wumpus
         self.arrows = 1
         self.visited = set()
+        self.num_pits = num_pits
 
     def initialize(self):
         # Place the agent in the starting position
@@ -41,18 +42,37 @@ class WumpusWorld:
         self.arrows = 1
 
         # Randomly place the gold
-        self.gold_position = self.random_empty_position()
+        gold_placed = 0
+        while gold_placed < self.num_gold:
+            # Randomly choose a position for a Wumpus
+            gold_position = self.random_empty_position()
+
+            # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a pit
+            if self.grid[gold_position[0]][gold_position[1]] != 'P' and self.grid[gold_position[0]][gold_position[1]] != 'W':
+                self.grid[gold_position[0]][gold_position[1]] = 'G'
+                gold_placed += 1
 
         # Randomly place the Wumpus
-        self.wumpus_position = self.random_empty_position()
+        wumpus_placed = 0
+        while wumpus_placed < self.num_wumpus:
+            # Randomly choose a position for a Wumpus
+            wumpus_position = self.random_empty_position()
+
+            # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a pit
+            if wumpus_position[1] != 1 and wumpus_position[0] != 1 and self.grid[wumpus_position[0]][wumpus_position[1]] != 'P':
+                self.grid[wumpus_position[0]][wumpus_position[1]] = 'W'
+                wumpus_placed += 1
 
         # Randomly add pits based on pit_probability
-        for row in range(self.size):
-            for col in range(self.size):
-                if (row, col) != self.agent_position and (row, col) != self.gold_position and (row, col) != self.wumpus_position:
-                    if random.random() < self.pit_probability:
-                        if row != 1 and col != 1:
-                            self.grid[row][col] = 'P'
+        pits_placed = 0
+        while pits_placed < self.num_pits:
+            # Randomly choose a position for a pit
+            pit_position = self.random_empty_position()
+
+            # Check if the chosen position is not 1,2 and not 2,1, and it's not occupied by a Wumpus
+            if pit_position[0] != 1 and pit_position[1] != 1 and self.grid[pit_position[0]][pit_position[1]] != 'W':
+                self.grid[pit_position[0]][pit_position[1]] = 'P'
+                pits_placed += 1
 
     def random_empty_position(self):
         while True:
@@ -78,7 +98,7 @@ class WumpusWorld:
             self.arrows -= 1
             row, col = self.agent_position
 
-            if (row, col) == self.wumpus_position:
+            if self.grid[row][col] == 'W':
                 return True  # Wumpus is killed
             else:
                 return False  # Arrow missed
@@ -88,13 +108,13 @@ class WumpusWorld:
     def is_game_over(self):
         row, col = self.agent_position
 
-        if (row, col) == self.wumpus_position:
+        if self.grid[row][col] == 'W':
             return True, "Agent was eaten by the Wumpus!"
-        elif (row, col) == self.gold_position:
+        elif self.grid[row][col] == 'G':
             return True, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
             return True, "Agent fell into a pit and lost -1000 points!"
-        elif self.arrows == 0 and (row, col) != self.wumpus_position:
+        elif self.arrows == 0 and self.grid[row][col] != 'W':
             return True, "Agent ran out of arrows and couldn't kill the Wumpus."
 
         return False, ""
@@ -114,17 +134,17 @@ class WumpusWorld:
             percepts.append('Breeze')
 
         # Check for Stench (Wumpus nearby)
-        if (row > 0 and self.wumpus_position == (row - 1, col)) or \
-           (row < self.size - 1 and self.wumpus_position == (row + 1, col)) or \
-           (col > 0 and self.wumpus_position == (row, col - 1)) or \
-           (col < self.size - 1 and self.wumpus_position == (row, col + 1)):
+        if row > 0 and self.grid[row - 1][col] == 'W':
+            percepts.append('Stench')
+        if row < self.size - 1 and self.grid[row + 1][col] == 'W':
+            percepts.append('Stench')
+        if col > 0 and self.grid[row][col - 1] == 'W':
+            percepts.append('Stench')
+        if col < self.size - 1 and self.grid[row][col + 1] == 'W':
             percepts.append('Stench')
 
         # Check for Glint (gold nearby)
-        if (row > 0 and self.gold_position == (row - 1, col)) or \
-           (row < self.size - 1 and self.gold_position == (row + 1, col)) or \
-           (col > 0 and self.gold_position == (row, col - 1)) or \
-           (col < self.size - 1 and self.gold_position == (row, col + 1)):
+        if self.grid[row][col] == 'G':
             percepts.append('Glint')
             
         text = str(percepts)
@@ -136,9 +156,9 @@ class WumpusWorld:
             for col in range(self.size):
                 if (row, col) == self.agent_position:
                     print("A", end=" ")
-                elif (row, col) == self.gold_position:
+                elif self.grid[row][col] == 'G':
                     print("G", end=" ")
-                elif (row, col) == self.wumpus_position:
+                elif self.grid[row][col] == 'W':
                     print("W", end=" ")
                 elif self.grid[row][col] == 'P':
                     print("P", end=" ")
@@ -168,9 +188,9 @@ class WumpusWorld:
                 if (row, col) == self.agent_position:
                     pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
                     pygame.draw.circle(screen, GREEN, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
-                elif (row, col) == self.gold_position:
+                elif self.grid[row][col] == 'G':
                     pygame.draw.rect(screen, GOLD, (x, y, CELL_SIZE, CELL_SIZE))
-                elif (row, col) == self.wumpus_position:
+                elif self.grid[row][col] == 'W':
                     pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
                     pygame.draw.circle(screen, BLACK, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
                 elif self.grid[row][col] == 'P':
@@ -207,7 +227,7 @@ class WumpusWorld:
             self.arrows -= 1
             row, col = self.agent_position
 
-            if (row, col) == self.wumpus_position:
+            if self.grid[row][col] == 'W':
                 return True  # Wumpus is killed
             else:
                 return False  # Arrow missed
@@ -217,13 +237,13 @@ class WumpusWorld:
     def is_game_over(self):
         row, col = self.agent_position
 
-        if (row, col) == self.gold_position:
+        if self.grid[row][col] == 'G':
             return True, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
             return True, "Agent fell into a pit and lost -1000 points!"
-        elif (row, col) == self.wumpus_position:
+        elif self.grid[row][col] == 'W':
             return True, "Agent was eaten by the Wumpus."
-        elif self.arrows == 0 and (row, col) != self.wumpus_position:
+        elif self.arrows == 0 and self.grid[row][col] == 'W':
             return True, "Agent ran out of arrows and couldn't kill the Wumpus."
 
         return False, ""
