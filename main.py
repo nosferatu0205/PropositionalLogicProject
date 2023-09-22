@@ -271,9 +271,26 @@ if __name__ == "__main__":
                     world.move_agent('down')
                     world.point-=1
                 elif event.key == pygame.K_SPACE:
-                    wumpus_killed = world.shoot_arrow()
-                    world.point-=10
-                    if wumpus_killed:
+                    row, col = world.agent_position
+                    if world.grid[row-1][col] == 'W':
+                        world.grid[row-1][col] = None
+                        world.num_wumpus -=1
+                        world.point-=10
+                        print("Agent killed the Wumpus!")
+                    elif world.grid[row+1][col] == 'W':
+                        world.grid[row+1][col] = None
+                        world.num_wumpus -=1
+                        world.point-=10
+                        print("Agent killed the Wumpus!")
+                    elif world.grid[row][col+1] == 'W':
+                        world.grid[row][col+1] = None
+                        world.num_wumpus -=1
+                        world.point-=10
+                        print("Agent killed the Wumpus!")
+                    elif world.grid[row][col-1] == 'W':
+                        world.grid[row][col-1] = None
+                        world.num_wumpus -=1
+                        world.point-=10
                         print("Agent killed the Wumpus!")
                 elif event.key == pygame.K_0 and world.agent_position == (0, 0):
                     running = False
