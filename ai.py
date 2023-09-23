@@ -27,7 +27,7 @@ class CellKnowledge:
             knowledge_base.append(row)
         return knowledge_base
 
-    def update_knowledge_base(x, y, perceived_arr, knowledge_base):
+    def update_knowledge_base(self, x, y, perceived_arr, knowledge_base):
         if x < 0 or y < 0 or x >= WUMPUS_WORLD_SIZE or y >= WUMPUS_WORLD_SIZE:
             return
 
@@ -104,7 +104,7 @@ class CellKnowledge:
 
         return less_dangerous_paths
 
-    def get_next_move(x, y, perceived, knowledge_base, num_of_arrows):
+    def get_next_move(x, y, perceived,  num_of_arrows):
         knowledge_base[x][y].visited = True
 
         update_knowledge_base(x - 1, y, perceived, knowledge_base)

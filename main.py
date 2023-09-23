@@ -258,7 +258,7 @@ if __name__ == "__main__":
     world = WumpusWorld()
     world.initialize()
     running = True
-    ai =ai.AI(world)
+    #ai =ai.AI(world)
     while running:
         screen.fill(WHITE)
         world.draw(screen)
@@ -266,7 +266,7 @@ if __name__ == "__main__":
         game_over, result_message = world.is_game_over()
 
     # Get the next action from the AI#
-        print(ai.getNextMove())
+        #print(ai.getNextMove())
         #ai.printPath()
 
         if result_message == "Agent fell into a pit and lost -1000 points!":
