@@ -271,14 +271,10 @@ if __name__ == "__main__":
             running= False
             # todo: game over hoile game theke ber hoye jay, eita solve korte hobe
 
-        print("\nCurrent world:")
+       # print("\nCurrent world:")
        # for row in range(GRID_SIZE):
           #  print(" ".join(world.grid[row]))
-        print("Arrows left:", world.arrows)
-        percepts = list(set(world.get_percepts()))
-        text = str(percepts)
-        print("Percepts:", percepts)
-        print("points: ", world.point)
+
        # game_over, result_message = world.is_game_over()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -334,7 +330,11 @@ if __name__ == "__main__":
                         world.grid[row][col] = None  # Remove gold from the current cell
                         world.num_gold -= 1
                         world.point += 1000
-
+                print("Arrows left:", world.arrows)
+                percepts = list(set(world.get_percepts()))
+                text = str(percepts)
+                print("Percepts:", percepts)
+                print("points: ", world.point)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
