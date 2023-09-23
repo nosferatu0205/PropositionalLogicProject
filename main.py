@@ -1,6 +1,7 @@
 import random
 import pygame
 import numpy
+import ai
 
 # Define constants
 WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
@@ -25,6 +26,8 @@ restart_button = pygame.Rect(325, 900, 150, 50)
 restart_color = BLACK
 IMAGES = {}
 wall_check = numpy.zeros((10,10), dtype=bool)
+
+
 
 class WumpusWorld:
     def __init__(self, size=10, num_pits= 20, num_wumpus=2, num_gold =4):
@@ -98,12 +101,9 @@ class WumpusWorld:
             self.agent_position = (row + 1, col)
             wall_check[row+1, col] = True
 
-
-
-
     def is_game_over(self, manualoverride =False):
         if manualoverride:
-            return True, "Game is over"
+            return True, "Game is over. agent climbed out."
         row, col = self.agent_position
 
         if self.grid[row][col] == 'W':
@@ -114,8 +114,8 @@ class WumpusWorld:
             return True, "Agent fell into a pit and lost -1000 points!"
         return False, ""
 
-    def get_percepts(self):
-        row, col = self.agent_position
+    def get_percepts(self, position):
+        row, col = position
         percepts = []
 
         # Check for Breeze (pit nearby)
@@ -145,22 +145,22 @@ class WumpusWorld:
         text = str(percepts)
 
         return percepts
-
-    def print_world(self):
-        for row in range(self.size):
-            for col in range(self.size):
-                if (row, col) == self.agent_position:
-                    print("A", end=" ")
-                elif self.grid[row][col] == 'G':
-                    print("G", end=" ")
-                elif self.grid[row][col] == 'W':
-                    print("W", end=" ")
-                elif self.grid[row][col] == 'P':
-                    print("P", end=" ")
-                else:
-                    print("-", end=" ")
-            print()
-            
+    #
+    # def print_world(self):
+    #     for row in range(self.size):
+    #         for col in range(self.size):
+    #             if (row, col) == self.agent_position:
+    #                 print("A", end=" ")
+    #             elif self.grid[row][col] == 'G':
+    #                 print("G", end=" ")
+    #             elif self.grid[row][col] == 'W':
+    #                 print("W", end=" ")
+    #             elif self.grid[row][col] == 'P':
+    #                 print("P", end=" ")
+    #             else:
+    #                 print("-", end=" ")
+    #         print()
+    #
     def draw_text(self, color, text, x, y):
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
@@ -258,11 +258,16 @@ if __name__ == "__main__":
     world = WumpusWorld()
     world.initialize()
     running = True
+    ai =ai.AI(world)
     while running:
         screen.fill(WHITE)
         world.draw(screen)
         pygame.display.flip()
         game_over, result_message = world.is_game_over()
+
+    # Get the next action from the AI#
+        print(ai.getNextMove())
+        #ai.printPath()
 
         if result_message == "Agent fell into a pit and lost -1000 points!":
             world.point-=1000
@@ -331,7 +336,7 @@ if __name__ == "__main__":
                         world.num_gold -= 1
                         world.point += 1000
                 print("Arrows left:", world.arrows)
-                percepts = list(set(world.get_percepts()))
+                percepts = list(set(world.get_percepts(world.agent_position)))
                 text = str(percepts)
                 print("Percepts:", percepts)
                 print("points: ", world.point)
