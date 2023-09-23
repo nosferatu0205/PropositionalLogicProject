@@ -27,21 +27,20 @@ IMAGES = {}
 wall_check = numpy.zeros((10,10), dtype=bool)
 
 class WumpusWorld:
-    def __init__(self, size=10, num_pits= 20, num_wumpus=5, num_gold =4):
+    def __init__(self, size=10, num_pits= 20, num_wumpus=2, num_gold =4):
         self.size = size
         self.num_gold = num_gold
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.agent_position = (0, 0)
         self.point =0
         self.num_wumpus = num_wumpus
-        self.arrows = 1
+        self.arrows = num_wumpus
         self.visited = set()
         self.num_pits = num_pits
 
     def initialize(self):
         # Place the agent in the starting position
         self.agent_position = (0, 0)
-        self.arrows = self.num_wumpus
 
         # Randomly place the gold
         gold_placed = 0
@@ -184,8 +183,7 @@ class WumpusWorld:
                 screen.blit(IMAGES["grass"], _rect)
                 
                 if (row, col) == self.agent_position:
-                    pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
-                    pygame.draw.circle(screen, GREEN, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
+                    screen.blit(IMAGES["agent_down"], _rect)
                 elif self.grid[row][col] == 'G':
                     screen.blit(IMAGES["coin"], _rect)
                 elif self.grid[row][col] == 'W':
