@@ -17,9 +17,9 @@ class CellKnowledge:
         self.countStenchSensedNearby = 0
         self.countGlitterSensedNearby = 0
         self.visited = False
+        self.knowledge_base = []
+    def initialize_knowledge_base(self):
 
-    def initialize_knowledge_base():
-        knowledge_base = []
         for i in range(WUMPUS_WORLD_SIZE):
             row = []
             for j in range(WUMPUS_WORLD_SIZE):
@@ -69,11 +69,7 @@ class CellKnowledge:
         if x < 0 or y < 0 or x >= WUMPUS_WORLD_SIZE or y >= WUMPUS_WORLD_SIZE:
             return False
 
-        if (
-            knowledge_base[x][y].countStenchSensedNearby >= 2
-            and knowledge_base[x][y].countBreezeSensedNearby < 2
-            and num_of_arrows > 0
-        ):
+        if (knowledge_base[x][y].countStenchSensedNearby >= 2 and knowledge_base[x][y].countBreezeSensedNearby < 2 and num_of_arrows > 0):
             return True
 
         return False
@@ -104,52 +100,52 @@ class CellKnowledge:
 
         return less_dangerous_paths
 
-    def get_next_move(x, y, perceived,  num_of_arrows):
-        knowledge_base[x][y].visited = True
+    def get_next_move(self,x, y, perceived,  num_of_arrows):
+        self.knowledge_base[x][y].visited = True
 
-        update_knowledge_base(x - 1, y, perceived, knowledge_base)
-        update_knowledge_base(x + 1, y, perceived, knowledge_base)
-        update_knowledge_base(x, y - 1, perceived, knowledge_base)
-        update_knowledge_base(x, y + 1, perceived, knowledge_base)
+        self.update_knowledge_base(x - 1, y, perceived, self.knowledge_base)
+        self.update_knowledge_base(x + 1, y, perceived, self.knowledge_base)
+        self.update_knowledge_base(x, y - 1, perceived, self.knowledge_base)
+        self.update_knowledge_base(x, y + 1, perceived, self.knowledge_base)
 
-        if predicate_glittery_and_safe_path(x + 1, y, knowledge_base):
+        if self.predicate_glittery_and_safe_path(x + 1, y, self.knowledge_base):
             return x + 1, y
-        elif predicate_glittery_and_safe_path(x - 1, y, knowledge_base):
+        elif self.predicate_glittery_and_safe_path(x - 1, y, self.knowledge_base):
             return x - 1, y
-        elif predicate_glittery_and_safe_path(x, y + 1, knowledge_base):
+        elif self.predicate_glittery_and_safe_path(x, y + 1, self.knowledge_base):
             return x, y + 1
-        elif predicate_glittery_and_safe_path(x, y - 1, knowledge_base):
+        elif self.predicate_glittery_and_safe_path(x, y - 1, self.knowledge_base):
             return x, y - 1
 
-        if predicate_throw_arrow(x - 1, y, knowledge_base, num_of_arrows):
+        if self.predicate_throw_arrow(x - 1, y, self.knowledge_base, num_of_arrows):
             return x - 1, y
-        elif predicate_throw_arrow(x + 1, y, knowledge_base, num_of_arrows):
+        elif self.predicate_throw_arrow(x + 1, y, self.knowledge_base, num_of_arrows):
             return x + 1, y
-        elif predicate_throw_arrow(x, y - 1, knowledge_base, num_of_arrows):
+        elif self.predicate_throw_arrow(x, y - 1, self.knowledge_base, num_of_arrows):
             return x, y - 1
-        elif predicate_throw_arrow(x, y + 1, knowledge_base, num_of_arrows):
+        elif self.predicate_throw_arrow(x, y + 1, self.knowledge_base, num_of_arrows):
             return x, y + 1
 
-        if predicate_safe_unvisited_path(x + 1, y, knowledge_base):
+        if self.predicate_safe_unvisited_path(x + 1, y, self.knowledge_base):
             return x + 1, y
-        elif predicate_safe_unvisited_path(x - 1, y, knowledge_base):
+        elif self.predicate_safe_unvisited_path(x - 1, y, self.knowledge_base):
             return x - 1, y
-        elif predicate_safe_unvisited_path(x, y + 1, knowledge_base):
+        elif self.predicate_safe_unvisited_path(x, y + 1, self.knowledge_base):
             return x, y + 1
-        elif predicate_safe_unvisited_path(x, y - 1, knowledge_base):
+        elif self.predicate_safe_unvisited_path(x, y - 1, self.knowledge_base):
             return x, y - 1
 
         # Backtrack since no visited safe path found
-        if knowledge_base[x - 1][y].visited:
+        if self.knowledge_base[x - 1][y].visited:
             return x - 1, y
-        elif knowledge_base[x + 1][y].visited:
+        elif self.knowledge_base[x + 1][y].visited:
             return x + 1, y
-        elif knowledge_base[x][y - 1].visited:
+        elif self.knowledge_base[x][y - 1].visited:
             return x, y - 1
-        elif knowledge_base[x][y + 1].visited:
+        elif self.knowledge_base[x][y + 1].visited:
             return x, y + 1
 
         # We are back to cell (1,1). We have no other choice but to make a dangerous move
         # So we will list "probably dangerous" paths and pick one at random.
-        probably_dangerous_paths = exclude_death_paths(x, y, knowledge_base)
+        probably_dangerous_paths = self.exclude_death_paths(x, y, self.knowledge_base)
         return probably_dangerous_paths[0]

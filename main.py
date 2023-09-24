@@ -258,13 +258,17 @@ if __name__ == "__main__":
     world = WumpusWorld()
     world.initialize()
     running = True
-    #ai =ai.AI(world)
+
     while running:
         screen.fill(WHITE)
         world.draw(screen)
         pygame.display.flip()
         game_over, result_message = world.is_game_over()
+        row, col = world.agent_position
+        ai =ai.CellKnowledge(row, col)
+        percepts= world.get_percepts(world.agent_position)
 
+        print(ai.get_next_move(row,col, percepts, world.arrows))
     # Get the next action from the AI#
         #print(ai.getNextMove())
         #ai.printPath()
