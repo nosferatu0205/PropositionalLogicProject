@@ -28,6 +28,11 @@ IMAGES = {}
 wall_check = numpy.zeros((10,10), dtype=bool)
 
 
+arrows_display = pygame.Rect(575, 900, 150, 50)
+points_display = pygame.Rect(325, 900, 200, 50)
+percepts_display = pygame.Rect(75, 900, 400, 50)
+
+
 
 class WumpusWorld:
     def __init__(self, size=10, num_pits= 20, num_wumpus=2, num_gold =4):
@@ -243,6 +248,20 @@ class WumpusWorld:
         # Draw the restart button
         pygame.draw.rect(screen, restart_color, restart_button)
         pygame.draw.rect(screen, BLACK, restart_button, 2)
+        
+        pygame.draw.rect(screen, WHITE, arrows_display)
+        pygame.draw.rect(screen, WHITE, arrows_display, 2)
+        self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
+        
+        pygame.draw.rect(screen, WHITE, points_display)
+        pygame.draw.rect(screen, WHITE, points_display, 2)
+        self.draw_text(BLACK, f"Points: {self.point}", 575, 975)
+        
+        pygame.draw.rect(screen, WHITE, percepts_display)
+        pygame.draw.rect(screen, BLACK, percepts_display, 2)
+        percepts = self.get_percepts(self.agent_position)
+        #self.draw_text(BLACK, f"Percepts: {', '.join(percepts)}", 575, 825)
+                       
         self.draw_text( GREEN ,"Restart", 360, 914)
 
 def load_images():
@@ -265,10 +284,10 @@ if __name__ == "__main__":
         pygame.display.flip()
         game_over, result_message = world.is_game_over()
         row, col = world.agent_position
-        ai =ai.CellKnowledge(row, col)
+        #ai =ai.CellKnowledge(row, col)
         percepts= world.get_percepts(world.agent_position)
 
-        print(ai.get_next_move(row,col, percepts, world.arrows))
+        #print(ai.get_next_move(row,col, percepts, world.arrows))
     # Get the next action from the AI#
         #print(ai.getNextMove())
         #ai.printPath()
