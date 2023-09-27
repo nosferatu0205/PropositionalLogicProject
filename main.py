@@ -240,8 +240,8 @@ class WumpusWorld:
                 x = col * CELL_SIZE
                 y = row * CELL_SIZE
                 _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
-              #  if (row != 0 or col != 0) and wall_check[row,col] == False :
-                 #   screen.blit(IMAGES["wall"], _rect)
+                if (row != 0 or col != 0) and wall_check[row,col] == False :
+                   screen.blit(IMAGES["wall"], _rect)
         # pygame.draw.rect(screen, BLACK, text_box)
         # pygame.draw.rect(screen, GREEN, text_box, 2)
         self.draw_text2( BLACK ,text, 360, 825)        
@@ -267,7 +267,7 @@ class WumpusWorld:
 
 def load_images():
     # wumpus er age wall chhilo
-    pics = ["agent_down", "agent_left", "agent_right", "agent_up", "breeze", "coin", "glitter", "grass", "hole", "smell", "wumpus" , "wumpus_dead"]
+    pics = ["agent_down", "agent_left", "agent_right", "agent_up", "breeze", "coin", "glitter", "grass", "hole", "smell", "wumpus" , "wumpus_dead", "wall"]
     for pic in pics:
         IMAGES[pic] = pygame.transform.scale(pygame.image.load(f"./Asset/{pic}.png"), (CELL_SIZE, CELL_SIZE))
     
@@ -298,8 +298,10 @@ if __name__ == "__main__":
         if game_over:
             print("\nGame Over:", result_message)
             # running= False
-            world = WumpusWorld()
-            world.initialize()
+            
+            wall_check = numpy.ones((10, 10), dtype=bool)
+            # world = WumpusWorld()
+            # world.initialize()
             text = "Agent died. Game restarted."
             
             # todo: game over hoile game theke ber hoye jay, eita solve korte hobe
@@ -374,6 +376,7 @@ if __name__ == "__main__":
                 if event.button == 1:
                     if restart_button.collidepoint(event.pos):
                         # Restart the game when the restart button is clicked
+                        wall_check = numpy.zeros((10, 10), dtype=bool)
                         world = WumpusWorld()
                         world.initialize()
                         text = "restarted"

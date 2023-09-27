@@ -18,13 +18,14 @@ class CellKnowledge:
         self.countGlitterSensedNearby = 0
         self.visited = False
         self.knowledge_base = []
+        
     def initialize_knowledge_base(self):
 
         for i in range(WUMPUS_WORLD_SIZE):
             row = []
             for j in range(WUMPUS_WORLD_SIZE):
                 row.append(CellKnowledge(i, j))
-            knowledge_base.append(row)
+            self.knowledge_base.append(row)
         return knowledge_base
 
     def update_knowledge_base(self, x, y, perceived_arr, knowledge_base):
