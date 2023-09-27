@@ -116,7 +116,8 @@ class WumpusWorld:
         elif self.grid[row][col] == 'G':
             return False, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
-            return True, "Agent fell into a pit and lost -1000 points!"
+            self.text="Agent fell into a pit and lost 1000 points!"
+            return True, "Agent fell into a pit and lost 1000 points!"
         return False, ""
 
     def get_percepts(self, position):
@@ -255,12 +256,12 @@ class WumpusWorld:
         
         pygame.draw.rect(screen, WHITE, points_display)
         pygame.draw.rect(screen, WHITE, points_display, 2)
-        self.draw_text(BLACK, f"Points: {self.point}", 575, 975)
+        self.draw_text(BLACK, f"Points: {self.point}", 575, 950)
         
-        pygame.draw.rect(screen, WHITE, percepts_display)
-        pygame.draw.rect(screen, BLACK, percepts_display, 2)
-        percepts = self.get_percepts(self.agent_position)
-        #self.draw_text(BLACK, f"Percepts: {', '.join(percepts)}", 575, 825)
+        # pygame.draw.rect(screen, WHITE, percepts_display)
+        # pygame.draw.rect(screen, BLACK, percepts_display, 2)
+        # percepts = self.get_percepts(self.agent_position)
+        # #self.draw_text(BLACK, f"Percepts: {', '.join(percepts)}", 575, 825)
                        
         self.draw_text( GREEN ,"Restart", 360, 914)
 
@@ -292,12 +293,17 @@ if __name__ == "__main__":
         #print(ai.getNextMove())
         #ai.printPath()
 
-        if result_message == "Agent fell into a pit and lost -1000 points!":
+        if result_message == "Agent fell into a pit and lost 1000 points!":
             world.point-=1000
         if game_over:
             print("\nGame Over:", result_message)
-            running= False
+            # running= False
+            world = WumpusWorld()
+            world.initialize()
+            text = "Agent died. Game restarted."
+            
             # todo: game over hoile game theke ber hoye jay, eita solve korte hobe
+            
 
        # print("\nCurrent world:")
        # for row in range(GRID_SIZE):
