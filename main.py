@@ -31,7 +31,7 @@ wall_check = numpy.zeros((10,10), dtype=bool)
 arrows_display = pygame.Rect(575, 900, 150, 50)
 points_display = pygame.Rect(325, 900, 200, 50)
 percepts_display = pygame.Rect(75, 900, 400, 50)
-
+game_over_tracker = True
 
 
 class WumpusWorld:
@@ -46,6 +46,8 @@ class WumpusWorld:
         self.visited = set()
         self.num_pits = num_pits
         self.fallen_into_pit = False
+        self.eaten_by_wumpus = False
+        #self.game_over_tracker = False
     def initialize(self):
         # Place the agent in the starting position
         self.agent_position = (0, 0)
@@ -108,11 +110,14 @@ class WumpusWorld:
 
     def is_game_over(self, manualoverride =False):
         if manualoverride:
+            game_over_tracker = True
             return True, "Game is over. agent climbed out."
         row, col = self.agent_position
 
         if self.grid[row][col] == 'W':
-            return True, "Agent was eaten by the Wumpus!"
+            if not self.eaten_by_wumpus:
+                self.eaten_by_wumpus = True
+                return True, "Agent was eaten by the Wumpus!"
         elif self.grid[row][col] == 'G':
             return False, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
@@ -299,19 +304,19 @@ if __name__ == "__main__":
         #print(ai.getNextMove())
         #ai.printPath()
 
-        if result_message == "Agent fell into a pit and lost 1000 points!":
-            world.point-=1000
+        #if result_message == "Agent fell into a pit and lost 1000 points!":
+            #world.point-=1000
         if game_over:
             print("\nGame Over:", result_message)
             # running= False
-            
+
             wall_check = numpy.ones((10, 10), dtype=bool)
             # world = WumpusWorld()
             # world.initialize()
             text = "Agent died. Game over. Press restart to try again."
-            
+
             # todo: game over hoile game theke ber hoye jay, eita solve korte hobe - done
-            
+
 
        # print("\nCurrent world:")
        # for row in range(GRID_SIZE):
@@ -323,6 +328,8 @@ if __name__ == "__main__":
                 running = False
 
             elif event.type == pygame.KEYDOWN:
+                if game_over_tracker==False:
+                    continue
                 if event.key == pygame.K_w or event.key == pygame.K_s or event.key == pygame.K_d or event.key == pygame.K_a:
                     row, col = world.agent_position
                     if event.key == pygame.K_w and world.grid[row-1][col] == 'W' and world.arrows>0:
