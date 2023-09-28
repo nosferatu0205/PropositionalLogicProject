@@ -45,7 +45,7 @@ class WumpusWorld:
         self.arrows = num_wumpus
         self.visited = set()
         self.num_pits = num_pits
-
+        self.fallen_into_pit = False
     def initialize(self):
         # Place the agent in the starting position
         self.agent_position = (0, 0)
@@ -116,8 +116,12 @@ class WumpusWorld:
         elif self.grid[row][col] == 'G':
             return False, "Agent found the gold and climbed out of the cave with +1000 points!"
         elif self.grid[row][col] == 'P':
-            self.text="Agent fell into a pit and lost 1000 points!"
-            return True, "Agent fell into a pit and lost 1000 points!"
+            #self.text="Agent fell into a pit and lost 1000 points!"
+            #return True, "Agent fell into a pit and lost 1000 points!"
+            if not self.fallen_into_pit:
+                self.fallen_into_pit = True
+                self.point-=1000
+                return True, "Agent fell into a pit and lost 1000 points!"
         return False, ""
 
     def get_percepts(self, position):
@@ -253,6 +257,8 @@ class WumpusWorld:
         pygame.draw.rect(screen, WHITE, arrows_display)
         pygame.draw.rect(screen, WHITE, arrows_display, 2)
         self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
+
+        self.draw_text(BLACK, f"Gold: {self.num_gold}", 575, 850)
         
         pygame.draw.rect(screen, WHITE, points_display)
         pygame.draw.rect(screen, WHITE, points_display, 2)
@@ -302,9 +308,9 @@ if __name__ == "__main__":
             wall_check = numpy.ones((10, 10), dtype=bool)
             # world = WumpusWorld()
             # world.initialize()
-            text = "Agent died. Game restarted."
+            text = "Agent died. Game over. Press restart to try again."
             
-            # todo: game over hoile game theke ber hoye jay, eita solve korte hobe
+            # todo: game over hoile game theke ber hoye jay, eita solve korte hobe - done
             
 
        # print("\nCurrent world:")
