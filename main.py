@@ -31,7 +31,7 @@ wall_check = numpy.zeros((10,10), dtype=bool)
 arrows_display = pygame.Rect(575, 900, 150, 50)
 points_display = pygame.Rect(325, 900, 200, 50)
 percepts_display = pygame.Rect(75, 900, 400, 50)
-game_over_tracker = True
+#game_over_tracker = True
 
 
 class WumpusWorld:
@@ -47,7 +47,7 @@ class WumpusWorld:
         self.num_pits = num_pits
         self.fallen_into_pit = False
         self.eaten_by_wumpus = False
-        #self.game_over_tracker = False
+        self.game_over_tracker = False
     def initialize(self):
         # Place the agent in the starting position
         self.agent_position = (0, 0)
@@ -110,7 +110,7 @@ class WumpusWorld:
 
     def is_game_over(self, manualoverride =False):
         if manualoverride:
-            game_over_tracker = True
+            self.game_over_tracker = True
             return True, "Game is over. agent climbed out."
         row, col = self.agent_position
 
@@ -259,15 +259,17 @@ class WumpusWorld:
         pygame.draw.rect(screen, restart_color, restart_button)
         pygame.draw.rect(screen, BLACK, restart_button, 2)
         
-        pygame.draw.rect(screen, WHITE, arrows_display)
-        pygame.draw.rect(screen, WHITE, arrows_display, 2)
+        #pygame.draw.rect(screen, WHITE, arrows_display)
+        #pygame.draw.rect(screen, WHITE, arrows_display, 2)
         self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
 
-        self.draw_text(BLACK, f"Gold: {self.num_gold}", 575, 850)
-        
-        pygame.draw.rect(screen, WHITE, points_display)
-        pygame.draw.rect(screen, WHITE, points_display, 2)
-        self.draw_text(BLACK, f"Points: {self.point}", 575, 950)
+        self.draw_text(BLACK, f"Gold remaining: {self.num_gold}", 575, 875)
+
+
+        #pygame.draw.rect(screen, WHITE, points_display)
+        #pygame.draw.rect(screen, WHITE, points_display, 2)
+        self.draw_text(BLACK, f"Points: {self.point}", 575, 925)
+        self.draw_text(BLACK, f"Wumpus left: {self.num_wumpus}", 575, 850)
         
         # pygame.draw.rect(screen, WHITE, percepts_display)
         # pygame.draw.rect(screen, BLACK, percepts_display, 2)
@@ -307,6 +309,7 @@ if __name__ == "__main__":
         #if result_message == "Agent fell into a pit and lost 1000 points!":
             #world.point-=1000
         if game_over:
+            world.game_over_tracker = True
             print("\nGame Over:", result_message)
             # running= False
 
@@ -328,7 +331,7 @@ if __name__ == "__main__":
                 running = False
 
             elif event.type == pygame.KEYDOWN:
-                if game_over_tracker==False:
+                if world.game_over_tracker:
                     continue
                 if event.key == pygame.K_w or event.key == pygame.K_s or event.key == pygame.K_d or event.key == pygame.K_a:
                     row, col = world.agent_position
