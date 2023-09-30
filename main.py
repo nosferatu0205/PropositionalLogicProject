@@ -156,6 +156,14 @@ class WumpusWorld:
         # Check for Glint (gold nearby)
         if self.grid[row][col] == 'G':
             percepts.append('Glint')
+        if row > 0 and self.grid[row - 1][col] == 'G':
+            percepts.append('Glint')
+        if row < self.size - 1 and self.grid[row + 1][col] == 'G':
+            percepts.append('Glint')
+        if col > 0 and self.grid[row][col - 1] == 'G':
+            percepts.append('Glint')
+        if col < self.size - 1 and self.grid[row][col + 1] == 'G':
+            percepts.append('Glint')
             
         text = str(percepts)
 
@@ -196,7 +204,7 @@ class WumpusWorld:
                 y = row * CELL_SIZE
                 _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
                 screen.blit(IMAGES["grass"], _rect)
-                
+
                 if (row, col) == self.agent_position:
                     screen.blit(IMAGES["agent_down"], _rect)
                 elif self.grid[row][col] == 'G':
@@ -207,7 +215,7 @@ class WumpusWorld:
                 elif self.grid[row][col] == 'P':
                     screen.blit(IMAGES["hole"], _rect)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
-        
+
         for row in range(GRID_SIZE):
             for col in range(GRID_SIZE):
                 x = col * CELL_SIZE
@@ -217,7 +225,22 @@ class WumpusWorld:
                 rect_left = pygame.Rect(x-CELL_SIZE, y, CELL_SIZE, CELL_SIZE)
                 rect_up = pygame.Rect(x, y-CELL_SIZE, CELL_SIZE, CELL_SIZE)
                 rect_down = pygame.Rect(x, y+CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                
+
+
+                #gold er jonno
+                if self.grid[row][col] == 'G':
+                    img= "glitter"
+
+                    # Check for gold in adjacent cells and draw glints
+                    if col < 9:
+                        screen.blit(IMAGES[img], rect_right)
+                    if col > 0:
+                        screen.blit(IMAGES[img], rect_left)
+                    if row > 0:
+                        screen.blit(IMAGES[img], rect_up)
+                    if row < 9:
+                        screen.blit(IMAGES[img], rect_down)
+
 
                 # elif self.grid[row][col] == 'G':
                     # screen.blit(IMAGES["coin"], _rect)
@@ -243,7 +266,7 @@ class WumpusWorld:
                     if row < 9:
                         screen.blit(IMAGES[img], rect_down)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
-                
+
         for row in range(GRID_SIZE):
             for col in range(GRID_SIZE):
                 x = col * CELL_SIZE
@@ -253,12 +276,12 @@ class WumpusWorld:
                    screen.blit(IMAGES["wall"], _rect)
         # pygame.draw.rect(screen, BLACK, text_box)
         # pygame.draw.rect(screen, GREEN, text_box, 2)
-        self.draw_text2( BLACK ,text, 360, 825)        
+        self.draw_text2( BLACK ,text, 360, 825)
 
         # Draw the restart button
         pygame.draw.rect(screen, restart_color, restart_button)
         pygame.draw.rect(screen, BLACK, restart_button, 2)
-        
+
         #pygame.draw.rect(screen, WHITE, arrows_display)
         #pygame.draw.rect(screen, WHITE, arrows_display, 2)
         self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
@@ -270,13 +293,28 @@ class WumpusWorld:
         #pygame.draw.rect(screen, WHITE, points_display, 2)
         self.draw_text(BLACK, f"Points: {self.point}", 575, 925)
         self.draw_text(BLACK, f"Wumpus left: {self.num_wumpus}", 575, 850)
-        
+
         # pygame.draw.rect(screen, WHITE, percepts_display)
         # pygame.draw.rect(screen, BLACK, percepts_display, 2)
         # percepts = self.get_percepts(self.agent_position)
         # #self.draw_text(BLACK, f"Percepts: {', '.join(percepts)}", 575, 825)
-                       
+
         self.draw_text( GREEN ,"Restart", 360, 914)
+
+    def print_world(self):
+        for row in range(self.size):
+            for col in range(self.size):
+                if (row, col) == self.agent_position:
+                    print("A", end=" ")
+                elif self.grid[row][col] == 'G':
+                    print("G", end=" ")
+                elif self.grid[row][col] == 'W':
+                    print("W", end=" ")
+                elif self.grid[row][col] == 'P':
+                    print("P", end=" ")
+                else:
+                    print("-", end=" ")
+            print()
 
 def load_images():
     # wumpus er age wall chhilo
@@ -296,6 +334,7 @@ if __name__ == "__main__":
         screen.fill(WHITE)
         world.draw(screen)
         pygame.display.flip()
+
         game_over, result_message = world.is_game_over()
         row, col = world.agent_position
         #ai =ai.CellKnowledge(row, col)
@@ -327,10 +366,12 @@ if __name__ == "__main__":
 
        # game_over, result_message = world.is_game_over()
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
 
             elif event.type == pygame.KEYDOWN:
+                world.print_world()
                 if world.game_over_tracker:
                     continue
                 if event.key == pygame.K_w or event.key == pygame.K_s or event.key == pygame.K_d or event.key == pygame.K_a:
