@@ -287,8 +287,16 @@ class WumpusWorld:
         self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
 
         self.draw_text(BLACK, f"Gold remaining: {self.num_gold}", 575, 875)
+        self.draw_text(BLACK, f"Controls:", 25, 825)
 
+        self.draw_text(BLACK, f"Navigation:", 25, 850)
 
+        self.draw_text(BLACK, f"Up - down - left - right", 25, 875)
+        self.draw_text(BLACK, f"G - pick up gold", 25, 900)
+        self.draw_text(BLACK, f"0 - Climb out", 25, 925)
+        self.draw_text(BLACK, f"Shoot Wumpus", 25, 950)
+        self.draw_text(BLACK, f"Press W, A, S, D while facing wumpus", 25, 975)
+        
         #pygame.draw.rect(screen, WHITE, points_display)
         #pygame.draw.rect(screen, WHITE, points_display, 2)
         self.draw_text(BLACK, f"Points: {self.point}", 575, 925)
