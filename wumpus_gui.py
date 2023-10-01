@@ -1,3 +1,4 @@
+import time
 from xmlrpc.client import Boolean
 import pygame
 import sys
@@ -79,6 +80,7 @@ def show_percept(tile, scream, screen):
 
 def refresh_graphics(board, dir, show_board, screen):
     # screen.fill((0, 0, 0))
+    time.sleep(0.1)
     for c in range(B_C):
         board[c], board[B_C-c-1] = board[B_C-c-1], board[c]
     ''' Icons '''

@@ -149,7 +149,7 @@ class MyAI ( Agent ):
             return self.__go_to_dest(stench, breeze, glitter, bump, scream, gotnode[0], gotnode[1], False)
         if not breeze and not bump:
             if  not stench or (stench and self.__dead_wump):
-                self.__UpdateSafeTiles()
+                self.__UpdateSafeTileManual(self.__x_tile, self.__y_tile)
         if not self.__shot_arrow and self.__pitless_wump and not self.__dead_wump:
             if self.__Facing_Wump():
                 self.__shot_arrow = True
@@ -423,8 +423,6 @@ class MyAI ( Agent ):
             if(self.stench_wump_check(node) == True):
                 self.__found_wump = True
                 break
-        
-
         if self.__found_wump and not self.__pitless_wump:
             self.__pitless_wump = True
 
@@ -470,43 +468,6 @@ class MyAI ( Agent ):
                     return True
         
         return False
-
-                
-    def __UpdateSafeTiles(self):
-        if (self.__x_tile,self.__y_tile) not in self.__safe_tiles:
-            self.__safe_tiles.append((self.__x_tile,self.__y_tile))
-            if (self.__x_tile,self.__y_tile) in self.__potential_wump_nodes:
-                self.__potential_wump_nodes.remove((self.__x_tile,self.__y_tile))
-            if (self.__x_tile,self.__y_tile) in self.__potential_pit_nodes:
-                self.__potential_pit_nodes.remove((self.__x_tile,self.__y_tile))
-        if self.__x_tile-1>=1: #Left
-            if (self.__x_tile-1,self.__y_tile) not in self.__safe_tiles:
-                self.__safe_tiles.append((self.__x_tile-1,self.__y_tile))
-                if (self.__x_tile-1,self.__y_tile) in self.__potential_wump_nodes:
-                    self.__potential_wump_nodes.remove((self.__x_tile-1,self.__y_tile))
-                if (self.__x_tile-1,self.__y_tile) in self.__potential_pit_nodes:
-                    self.__potential_pit_nodes.remove((self.__x_tile-1,self.__y_tile))
-        if self.__x_tile+1<=self.__x_border: #Right
-            if (self.__x_tile+1,self.__y_tile) not in self.__safe_tiles:
-                self.__safe_tiles.append((self.__x_tile+1,self.__y_tile))
-                if (self.__x_tile+1,self.__y_tile) in self.__potential_wump_nodes:
-                    self.__potential_wump_nodes.remove((self.__x_tile+1,self.__y_tile))
-                if (self.__x_tile+1,self.__y_tile) in self.__potential_pit_nodes:
-                    self.__potential_pit_nodes.remove((self.__x_tile+1,self.__y_tile))
-        if self.__y_tile-1>=1: #Down
-            if (self.__x_tile,self.__y_tile-1) not in self.__safe_tiles:
-                self.__safe_tiles.append((self.__x_tile,self.__y_tile-1))
-                if (self.__x_tile,self.__y_tile-1) in self.__potential_wump_nodes:
-                    self.__potential_wump_nodes.remove((self.__x_tile,self.__y_tile-1))
-                if (self.__x_tile,self.__y_tile-1) in self.__potential_pit_nodes:
-                    self.__potential_pit_nodes.remove((self.__x_tile,self.__y_tile-1))
-        if self.__y_tile+1<=self.__y_border: #Up
-            if (self.__x_tile,self.__y_tile+1) not in self.__safe_tiles:
-                self.__safe_tiles.append((self.__x_tile,self.__y_tile+1))
-                if (self.__x_tile,self.__y_tile+1) in self.__potential_wump_nodes:
-                    self.__potential_wump_nodes.remove((self.__x_tile,self.__y_tile+1))
-                if (self.__x_tile,self.__y_tile+1) in self.__potential_pit_nodes:
-                    self.__potential_pit_nodes.remove((self.__x_tile,self.__y_tile+1))
     def __UpdateSafeStench(self):
         for node in self.__stench_nodes:
             if node not in self.__breeze_nodes:
@@ -700,13 +661,8 @@ class MyAI ( Agent ):
                     elif len(Paths[i]) < len(BestPath):
                         BestPath = Paths[i]
             return BestPath
-            
                 
     def __NodeDifference(self,x1,y1,x2,y2):
-        node_score = 0
-        x_score = 0
-        y_score = 0
-
         x_score = x2-x1
         y_score = y2-y1
 
