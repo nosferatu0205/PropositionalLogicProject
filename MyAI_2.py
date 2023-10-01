@@ -21,8 +21,6 @@ class MyAI ( Agent ):
         self.__path_home = []
         self.__dest_path = []
         self.__dest_node = (1,1)
-        self.__xBorder = 0
-        self.__yBorder = 0
         self.__in_danger = False
         self.__last_danger = (0,0)
         self.__x_border = 9
@@ -31,6 +29,7 @@ class MyAI ( Agent ):
         self.__stopped_on_iteration = 0
         self.__dead_wump = False
         self.__found_wump = False
+        self.__numberOfWumpus = arrows
         self.__pitless_wump = False
         self.__wump_node = (0,0)
         self.__potential_wump_nodes = []
@@ -131,7 +130,9 @@ class MyAI ( Agent ):
             self.__safe_tiles.append((2,1))
             self.__wump_node = (1,2)
             self.__potential_wump_nodes.append(self.__wump_node)
-            self.__found_wump = True
+            self.__numberOfWumpus-=1
+            if self.__numberOfWumpus < 1:
+                self.__found_wump = True
             found_node = False
             for i in range(len(self.__safe_tiles)):
                 node = self.__safe_tiles[len(self.__safe_tiles)-i-1]
@@ -412,14 +413,18 @@ class MyAI ( Agent ):
                 if (self.__x_tile,self.__y_tile+1) not in self.__safe_tiles:
                     Wump_Spots.append((self.__x_tile,self.__y_tile+1))
         if len(Wump_Spots)==2:
-            self.__found_wump = True
+            self.__numberOfWumpus-=1
+            if self.__numberOfWumpus < 1:
+                self.__found_wump = True
             self.__potential_wump_nodes = []
             self.__potential_wump_nodes.append(Wump_Spots[0])
             self.__wump_node = Wump_Spots[0]
             return
         for node in Wump_Spots:
             if node in self.__potential_wump_nodes:
-                self.__found_wump = True
+                self.__numberOfWumpus-=1
+                if self.__numberOfWumpus < 1:
+                    self.__found_wump = True
                 self.__potential_wump_nodes = []
                 self.__potential_wump_nodes.append(node)
                 self.__wump_node = node
@@ -429,7 +434,9 @@ class MyAI ( Agent ):
                 
         for node in self.__stench_nodes:
             if(self.stench_wump_check(node) == True):
-                self.__found_wump = True
+                self.__numberOfWumpus-=1
+                if self.__numberOfWumpus < 1:
+                    self.__found_wump = True
                 break
         if self.__found_wump and not self.__pitless_wump:
             self.__pitless_wump = True
@@ -603,6 +610,7 @@ class MyAI ( Agent ):
             self.__x_tile += self.__dir_to_coordinate(self.__dir)[0]
             self.__y_tile += self.__dir_to_coordinate(self.__dir)[1]
             return Agent.Action.FORWARD
+        
     def __optimal_home_path(self,x,y, x_target,y_target):
         '''Returns Optimal Path'''
         if (x_target==1 and y_target==1):

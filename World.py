@@ -198,7 +198,7 @@ class World():
             wc = self.__randomInt(self.__colDimension)
             wr = self.__randomInt(self.__rowDimension)
             
-            while wc == 0 and wr == 0:
+            while (wc == 0 or wc == 1) and (wr == 0 or wr == 1):
                 wc = self.__randomInt(self.__colDimension)
                 wr = self.__randomInt(self.__rowDimension)
                 
@@ -209,7 +209,7 @@ class World():
             gc = self.__randomInt(self.__colDimension)
             gr = self.__randomInt(self.__rowDimension)
                 
-            while ((gc == 0 and gr == 0) and (self.__board[gc][gr].wumpus == True)):
+            while ((gc == 0 or gc == 1) and (gr == 0 or gr == 1) and (self.__board[gc][gr].wumpus == True)):
                 gc = self.__randomInt(self.__colDimension)
                 gr = self.__randomInt(self.__rowDimension)
             
