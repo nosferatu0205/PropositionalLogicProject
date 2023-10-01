@@ -81,9 +81,9 @@ class World():
 														self.__board[self.__agentX][self.__agentY].gold, self.__bump, self.__scream)
 
             # Make the move
-            self.__score -= 1;
-            self.__bump   = False;
-            self.__scream = False;
+            self.__score -= 1
+            self.__bump   = False
+            self.__scream = False
             
             if self.__lastAction == Agent.Action.TURN_LEFT:
                 self.__agentDir -= 1
@@ -173,8 +173,9 @@ class World():
                         self.__score += 1000
                     if (self.__debug):
                         self.__printWorldInfo()
-                    return self.__score;
-            self.__board[self.__agentX][self.__agentY].visited = True;
+                        print("Agent Died")
+                    return self.__score
+            self.__board[self.__agentX][self.__agentY].visited = True
             self.__board[self.__agentX][self.__agentY].agent = True
         
         return self.__score
@@ -195,7 +196,7 @@ class World():
                 wc = self.__randomInt(self.__colDimension)
                 wr = self.__randomInt(self.__rowDimension)
                 
-            self.__addWumpus ( wc, wr );
+            self.__addWumpus ( wc, wr )
             
             # Generate gold
             gc = self.__randomInt(self.__colDimension)
@@ -214,22 +215,18 @@ class World():
                         self.__addPit ( c, r )
 
         else:
-            # Add the Wumpus
-            # print(next(file))
-            c, r = [int(x) for x in next(file).split()]
-            self.__addWumpus ( c, r )
-            
-            # Add the Gold
-            c, r = [int(x) for x in next(file).split()]
-            self.__addGold ( c, r )
-            
-            # Add the Pits
-            numOfPits = int(next(file))
-            
-            while numOfPits > 0:
-                numOfPits -= 1
-                c, r = [int(x) for x in next(file).split()]
-                self.__addPit ( c, r )
+            for i in range (0,10):
+                line = next(file).strip()
+                char_list = list(line)
+                print(char_list)
+                for j in range (0,10):
+                    print (i,j)
+                    if char_list[j] == 'P':
+                        self.__addPit(i, j)
+                    elif char_list[j] == 'W':
+                        self.__addWumpus(i, j)
+                    elif char_list[j] == 'G':
+                        self.__addGold(i,j)
                 
             file.close()
     

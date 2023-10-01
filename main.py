@@ -23,7 +23,7 @@ def game():
         main()
 
     elif choice == 2:
-        file = open('world/custom_world.txt', 'r')
+        file = open('world/req.txt', 'r')
         screen.fill((0, 0, 0))
         main(file)
     elif choice == 3:
