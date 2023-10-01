@@ -16,11 +16,18 @@ MEDIUMSEAGREEN = (0, 250, 154)
 
 RADIUS = 0.45*SQUARE_LEN
 
+IMAGES = {}
+def load_image():
+    pics = ["agent_down1", "agent_left1", "agent_right1", "agent_up1", "breeze", "gold", "bg", "bg1", "pit", "stench", "wumpus" , "dead_wumpus", "arrow_overlay"]
+    for pic in pics:
+        IMAGES[pic] = pygame.transform.scale(pygame.image.load(f"./icons/{pic}.png"), (SQUARE_LEN-1, SQUARE_LEN-1))
+        
 def board_graphics_init():
     pygame.init()
     board_width = B_R * SQUARE_LEN
     board_height = (B_C+2) * SQUARE_LEN
     screen = pygame.display.set_mode((board_width, board_height))
+    load_image()
     return screen
 
 def show_msg_up(txt, screen, color=WHITE):
@@ -45,17 +52,10 @@ def show_percept(tile, scream, screen):
 
     icon_size = (SQUARE_LEN-30, SQUARE_LEN-30)
 
-    dead_wump_img = pygame.image.load('icons/dead_wumpus.png')
-    dead_wump_img = pygame.transform.scale(dead_wump_img, icon_size)
-
-    gold_img = pygame.image.load('icons/gold.png')
-    gold_img = pygame.transform.scale(gold_img, icon_size)
-
-    breeze_img = pygame.image.load('icons/breeze.png')
-    breeze_img = pygame.transform.scale(breeze_img, icon_size)
-
-    stench_img = pygame.image.load('icons/stench.png')
-    stench_img = pygame.transform.scale(stench_img, icon_size)
+    dead_wump_img = IMAGES['dead_wumpus']
+    gold_img = IMAGES['gold']
+    breeze_img = IMAGES['breeze']
+    stench_img = IMAGES['stench']
 
     per = 0
     if tile.stench: per+=1
@@ -87,40 +87,19 @@ def refresh_graphics(board, dir, show_board, screen):
     for c in range(B_C):
         board[c], board[B_C-c-1] = board[B_C-c-1], board[c]
     ''' Icons '''
-    bg_img = pygame.image.load('icons/bg.jpg')
-    icon_size = (SQUARE_LEN-1, SQUARE_LEN-1)
-    bg_img = pygame.transform.scale(bg_img, icon_size)
 
-    wump_img = pygame.image.load('icons/wumpus.png')
-    wump_img = pygame.transform.scale(wump_img, icon_size)
-
-    player_right = pygame.image.load('icons/agent_right1.png')
-    player_right = pygame.transform.scale(player_right, icon_size)
-
-    player_left = pygame.image.load('icons/agent_left1.png')
-    player_left = pygame.transform.scale(player_left, icon_size)
-
-    player_up = pygame.image.load('icons/agent_up1.png')
-    player_up = pygame.transform.scale(player_up, icon_size)
-
-    player_down = pygame.image.load('icons/agent_down1.png')
-    player_down = pygame.transform.scale(player_down, icon_size)
-
-    pit_img = pygame.image.load('icons/pit.png')
-    pit_img = pygame.transform.scale(pit_img, icon_size)
-
-    gold_img = pygame.image.load('icons/gold.png')
-    gold_img = pygame.transform.scale(gold_img, icon_size)
-
-    breeze_img = pygame.image.load('icons/breeze.png')
-    breeze_img = pygame.transform.scale(breeze_img, icon_size)
-
-    stench_img = pygame.image.load('icons/stench.png')
-    stench_img = pygame.transform.scale(stench_img, icon_size)
-
-    alt_bg_img = pygame.image.load('icons/bg1.png')
-    alt_bg_img = pygame.transform.scale(alt_bg_img, icon_size)
-
+    bg_img = IMAGES['bg']
+    wump_img = IMAGES['wumpus']
+    player_right = IMAGES['agent_right1']
+    player_left = IMAGES['agent_left1']
+    player_up = IMAGES['agent_up1']
+    player_down = IMAGES['agent_down1']
+    pit_img = IMAGES['pit']
+    gold_img = IMAGES['gold']
+    breeze_img = IMAGES['breeze']
+    stench_img = IMAGES['stench']
+    alt_bg_img = IMAGES['bg1']
+    
     for col in range(B_C):
         for row in range(B_R):
             pos = (col*SQUARE_LEN, B_R*SQUARE_LEN - row*SQUARE_LEN+SQUARE_LEN)
@@ -174,11 +153,12 @@ def menu_gui(screen):
 
 def main_menu(screen):
     menu_gui(screen)
+    # mouse = pygame.mouse.get_pos()
     while True:  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-
+            # For events that occur upon clicking the mouse (left click) 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print(event.pos)
                 print(B_C*SQUARE_LEN, B_R*SQUARE_LEN)
@@ -189,4 +169,3 @@ def main_menu(screen):
                     return 2
                 elif (B_C*SQUARE_LEN//2)-w_pad <= event.pos[0] <= (B_C*SQUARE_LEN//2)+w_pad and (B_R*SQUARE_LEN//3+160)-h_pad <= event.pos[1] <= (B_R*SQUARE_LEN//3+160)+h_pad:
                     return 3
-
