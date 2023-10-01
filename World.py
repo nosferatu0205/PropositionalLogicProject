@@ -179,9 +179,9 @@ class World():
         
         return self.__score
         
-    # ===============================================================
-    # =             World Generation Functions
-    # ===============================================================
+
+    #World Generation Functions
+
     
     def __addFeatures ( self, file = None ):
         if file == None:
@@ -264,9 +264,9 @@ class World():
     def __isInBounds ( self, c, r ):
         return c < self.__colDimension and r < self.__rowDimension and c >= 0 and r >= 0
     
-    # ===============================================================
-    # =             World Printing Functions
-    # ===============================================================
+
+    # World Printing Functions
+
     
     def __printWorldInfo ( self ):
         self.__printBoardInfo()
@@ -365,10 +365,7 @@ class World():
             perceptString = perceptString[:-2]
         
         print(perceptString)
-    
-    # ===============================================================
-    # =                 Helper Functions
-    # ===============================================================
+
     
     def __randomInt ( self, limit ):
         return random.randrange(limit)

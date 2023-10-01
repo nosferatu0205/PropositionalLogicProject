@@ -24,8 +24,8 @@ class MyAI ( Agent ):
         self.__yBorder = 0
         self.__in_danger = False
         self.__last_danger = (0,0)
-        self.__x_border = 7
-        self.__y_border = 7
+        self.__x_border = 9
+        self.__y_border = 9
         self.__stop_iteration = False
         self.__stopped_on_iteration = 0
         self.__dead_wump = False
@@ -350,9 +350,9 @@ class MyAI ( Agent ):
     def calcRisk(self, sidenode):
         risk = 0
         if sidenode in self.__breeze_nodes:
-            risk += 100
+            risk += 300
         if sidenode in self.__stench_nodes:
-            risk += 100
+            risk += 300
         if sidenode in self.__safe_tiles:
             risk -=10
         return risk

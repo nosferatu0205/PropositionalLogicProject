@@ -76,8 +76,6 @@ def show_percept(tile, scream, screen):
 
     pygame.display.update()
 
-
-
 def refresh_graphics(board, dir, show_board, screen):
     # screen.fill((0, 0, 0))
     time.sleep(0.1)
