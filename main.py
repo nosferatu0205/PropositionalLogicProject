@@ -1,7 +1,7 @@
 import random
 import pygame
 import numpy
-import ai
+import ai2
 
 # Define constants
 WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
@@ -335,6 +335,7 @@ def load_images():
 if __name__ == "__main__":
     load_images()
     world = WumpusWorld()
+    decision_maker = ai2.DecisionMaker()
     world.initialize()
     running = True
 
@@ -347,6 +348,9 @@ if __name__ == "__main__":
         row, col = world.agent_position
         #ai =ai.CellKnowledge(row, col)
         percepts= world.get_percepts(world.agent_position)
+
+
+# Call the find_valid_moves() method on the instance
 
         #print(ai.get_next_move(row,col, percepts, world.arrows))
     # Get the next action from the AI#
@@ -380,6 +384,11 @@ if __name__ == "__main__":
 
             elif event.type == pygame.KEYDOWN:
                 world.print_world()
+
+                decision_maker.update(world.agent_position, world)
+                valid_moves = decision_maker.find_valid_moves(world.agent_position)
+# Now, valid_moves contains a list of valid moves as (row, col) tuples
+                print("valid moves", decision_maker.find_valid_moves(world.agent_position))
                 if world.game_over_tracker:
                     continue
                 if event.key == pygame.K_w or event.key == pygame.K_s or event.key == pygame.K_d or event.key == pygame.K_a:

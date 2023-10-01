@@ -1,3 +1,5 @@
+from main import WumpusWorld
+
 BREEZE = b'b'
 STENCH = b's'
 GLITTER = b'g'
