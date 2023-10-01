@@ -1,50 +1,58 @@
+import numpy as np
 from main import WumpusWorld
-
-BREEZE = b'b'
-STENCH = b's'
-GLITTER = b'g'
-PIT = b'p'
-WUMPUS = b'w'
-GOLD = b'$'
+# Define the size of the arrays
 WUMPUS_WORLD_SIZE = 10
+array_size = (WUMPUS_WORLD_SIZE, WUMPUS_WORLD_SIZE)
 
 class CellKnowledge:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.pit = True
-        self.wumpus = True
-        self.gold = True
-        self.countBreezeSensedNearby = 0
-        self.countStenchSensedNearby = 0
-        self.countGlitterSensedNearby = 0
-        self.visited = False
-        self.knowledge_base = []
-        
+        self.pit = np.zeros(array_size, dtype=int)
+        self.wumpus = np.zeros(array_size, dtype=int)
+        self.gold = np.zeros(array_size, dtype=int)
+        self.countBreezeSensedNearby = np.zeros(array_size, dtype=int)
+        self.countStenchSensedNearby = np.zeros(array_size, dtype=int)
+        self.countGlitterSensedNearby = np.zeros(array_size, dtype=int)
+        self.visited = np.zeros(array_size, dtype=bool)  # Make 'visited' an array
+
+        # Set the initial position (0, 0) as safe and visited
+        if x == 0 and y == 0:
+            self.visited[0, 0] = True
+
+        self.knowledge_base = self.initialize_knowledge_base()
+
     def initialize_knowledge_base(self):
+        knowledge_base = np.empty(array_size, dtype=object)
 
         for i in range(WUMPUS_WORLD_SIZE):
-            row = []
             for j in range(WUMPUS_WORLD_SIZE):
-                row.append(CellKnowledge(i, j))
-            self.knowledge_base.append(row)
+                knowledge_base[i, j] = CellKnowledge(i, j)
+
         return knowledge_base
 
-    def update_knowledge_base(self, x, y, perceived_arr, knowledge_base):
-        if x < 0 or y < 0 or x >= WUMPUS_WORLD_SIZE or y >= WUMPUS_WORLD_SIZE:
-            return
+    def update_knowledge_base(self, current_pos, knowledge_base):
+            x , y = current_pos
+            if x < 0 or y < 0 or x >= WUMPUS_WORLD_SIZE or y >= WUMPUS_WORLD_SIZE:
+                return
+            percepts = self.get_percepts(current_pos)
+            for perceived in percepts:
+                cell = knowledge_base[x, y]
 
-        for perceived in perceived_arr:
-            knowledge_base[x][y].pit ^= perceived == BREEZE
-            knowledge_base[x][y].wumpus ^= perceived == STENCH
-            knowledge_base[x][y].gold ^= perceived == GLITTER
+                if perceived == 'BREEZE':
+                    cell.countBreezeSensedNearby += 1
+                elif perceived == 'STENCH':
+                    cell.countStenchSensedNearby += 1
+                elif perceived == 'GLITTER':
+                    cell.countGlitterSensedNearby += 1
 
-            if perceived == BREEZE:
-                knowledge_base[x][y].countBreezeSensedNearby += 1
-            elif perceived == STENCH:
-                knowledge_base[x][y].countStenchSensedNearby += 1
-            elif perceived == GLITTER:
-                knowledge_base[x][y].countGlitterSensedNearby += 1
+                # Update pit, wumpus, and gold based on perceptions
+                if perceived == 'BREEZE':
+                    cell.pit = 0
+                elif perceived == 'STENCH':
+                    cell.wumpus = 0
+                elif perceived == 'GLITTER':
+                    cell.gold = 0
 
     def predicate_glittery_and_safe_path(x, y, knowledge_base):
         if x < 0 or y < 0 or x >= WUMPUS_WORLD_SIZE or y >= WUMPUS_WORLD_SIZE:

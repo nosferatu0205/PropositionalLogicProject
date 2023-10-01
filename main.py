@@ -2,6 +2,7 @@ import random
 import pygame
 import numpy
 import ai2
+import ai
 
 # Define constants
 WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
@@ -346,8 +347,12 @@ if __name__ == "__main__":
 
         game_over, result_message = world.is_game_over()
         row, col = world.agent_position
-        #ai =ai.CellKnowledge(row, col)
-        percepts= world.get_percepts(world.agent_position)
+        perceived_info = world.get_percepts(world.agent_position)
+        # cell_knowledge = ai.CellKnowledge(row,col)
+        # next_x, next_y = ai.cell_knowledge.get_next_move(row, col, perceived_info, world.arrows)
+        # print(next_x, next_y)
+        # #ai =ai.CellKnowledge(row, col)
+        # percepts= world.get_percepts(world.agent_position)
 
 
 # Call the find_valid_moves() method on the instance
