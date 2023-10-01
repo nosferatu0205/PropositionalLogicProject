@@ -26,7 +26,9 @@ class World():
         
         # Agent Initialization
         self.__goldLooted = False
+        self.__numberOfGolds = 0
         self.__hasArrow = True
+        self.__numberOfArrows = 0
         self.__bump = False
         self.__scream = False
         self.__score = 0
@@ -37,7 +39,7 @@ class World():
         self.__board = NotFoundErr
         self.__colDimension = 10
         self.__rowDimension = 10
-        self.__agent = MyAI()
+        self.__agent = None
             
         if file != None:
             self.__board = [[self.__Tile() for j in range(self.__rowDimension)] for i in range(self.__colDimension)]
@@ -108,7 +110,7 @@ class World():
                     self.__bump = True
                     
                 if self.__board[self.__agentX][self.__agentY].pit or self.__board[self.__agentX][self.__agentY].wumpus:
-                    self.__score -= 1000
+                    self.__score -= 10000
                     if self.__debug:
                         self.__printWorldInfo()
                     return self.__score
@@ -116,7 +118,9 @@ class World():
             elif self.__lastAction == Agent.Action.SHOOT:
             
                 if self.__hasArrow:
-                    self.__hasArrow = False
+                    self.__numberOfArrows-=1
+                    if self.__numberOfArrows == 0:
+                        self.__hasArrow = False
                     self.__score -= 10
                     
                     if self.__agentDir == 0:
@@ -165,15 +169,17 @@ class World():
             elif self.__lastAction == Agent.Action.GRAB:
                 if self.__board[self.__agentX][self.__agentY].gold:
                     self.__board[self.__agentX][self.__agentY].gold = False
-                    self.__goldLooted = True
+                    self.__numberOfGolds -= 1
+                    if self.__numberOfGolds < 1:
+                        self.__goldLooted = True
+                    self.__score += 1000
                     
             elif self.__lastAction == Agent.Action.CLIMB:
                 if self.__agentX == 0 and self.__agentY == 0:
                     if self.__goldLooted:
-                        self.__score += 1000
+                        self.__score += 100
                     if (self.__debug):
                         self.__printWorldInfo()
-                        print("Agent Died")
                     return self.__score
             self.__board[self.__agentX][self.__agentY].visited = True
             self.__board[self.__agentX][self.__agentY].agent = True
@@ -197,6 +203,7 @@ class World():
                 wr = self.__randomInt(self.__rowDimension)
                 
             self.__addWumpus ( wc, wr )
+            self.__numberOfArrows = 1
             
             # Generate gold
             gc = self.__randomInt(self.__colDimension)
@@ -207,6 +214,7 @@ class World():
                 gr = self.__randomInt(self.__rowDimension)
             
             self.__addGold ( gc, gr )
+            self.__numberOfGolds = 1
             
             # Generate pits
             for r in range (self.__rowDimension):
@@ -218,17 +226,21 @@ class World():
             for i in range (0,10):
                 line = next(file).strip()
                 char_list = list(line)
-                print(char_list)
+                # print(char_list)
                 for j in range (0,10):
-                    print (i,j)
+                    # print (i,j)
                     if char_list[j] == 'P':
                         self.__addPit(i, j)
                     elif char_list[j] == 'W':
                         self.__addWumpus(i, j)
+                        self.__numberOfArrows+=1
                     elif char_list[j] == 'G':
                         self.__addGold(i,j)
+                        self.__numberOfGolds += 1
                 
             file.close()
+        
+        self.__agent = MyAI(self.__numberOfGolds)
     
     def __addPit ( self, c, r ):
         if self.__isInBounds(c, r):

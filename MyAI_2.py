@@ -6,7 +6,7 @@ def randomInt ( limit ):
 
 class MyAI ( Agent ):
 
-    def __init__ ( self ):
+    def __init__ ( self , numberOfGolds):
         self.__moves = 0
         self.__safe_tiles = []
         self.__unsafe_tiles = set()
@@ -16,6 +16,7 @@ class MyAI ( Agent ):
         self.__dir = 'E'
         self.__move_history = []
         self.__has_gold = False
+        self.__numberOfGolds = numberOfGolds
         self.__revert_home = False
         self.__path_home = []
         self.__dest_path = []
@@ -196,9 +197,11 @@ class MyAI ( Agent ):
                 if self.__getExploredAllSafeNodes():
                     print('loop225')
                     self.__revert_home = True
-        if glitter == True: #Glitter Check
-            self.__has_gold = True
-            self.__revert_home = True
+        if glitter == True:
+            self.__numberOfGolds -= 1
+            if self.__numberOfGolds < 1:#Glitter Check
+                self.__has_gold = True
+                self.__revert_home = True
             self.__move_history.append("GRAB")
             self.__print_debug_info(stench, breeze, glitter, bump, scream)
             return Agent.Action.GRAB
