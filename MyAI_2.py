@@ -384,7 +384,7 @@ class MyAI ( Agent ):
         if self.__y_tile+1<=self.__y_border: #Up
             if (self.__x_tile,self.__y_tile+1) not in self.__safe_tiles:
                 Pit_Spots.append((self.__x_tile,self.__y_tile+1))
-        if len(Pit_Spots)==1:
+        if len(Pit_Spots)==2:
             if Pit_Spots[0] not in self.__potential_pit_nodes:
                 self.__potential_pit_nodes.append(Pit_Spots[0])
             return
@@ -411,7 +411,7 @@ class MyAI ( Agent ):
             if self.__y_tile+1<=self.__y_border: #Up
                 if (self.__x_tile,self.__y_tile+1) not in self.__safe_tiles:
                     Wump_Spots.append((self.__x_tile,self.__y_tile+1))
-        if len(Wump_Spots)==1:
+        if len(Wump_Spots)==2:
             self.__found_wump = True
             self.__potential_wump_nodes = []
             self.__potential_wump_nodes.append(Wump_Spots[0])
@@ -603,15 +603,52 @@ class MyAI ( Agent ):
             self.__x_tile += self.__dir_to_coordinate(self.__dir)[0]
             self.__y_tile += self.__dir_to_coordinate(self.__dir)[1]
             return Agent.Action.FORWARD
-        
     def __optimal_home_path(self,x,y, x_target,y_target):
         '''Returns Optimal Path'''
-        Path = self.__potential_path(x,y,[], x_target,y_target, 0)
-        print("Path to (", x_target, y_target, "): ")
-        print(Path)
-        if Path[-1][0] != x_target or Path[-1][1] != y_target:
-            self.__dest_node = (Path[-1][0],Path[-1][1])
-        return Path
+        if (x_target==1 and y_target==1):
+            def heuristic(node):
+                # Simple Manhattan distance as the heuristic
+                return abs(node[0] - x_target) + abs(node[1] - y_target)
+
+            def get_neighbors(node):
+                x, y = node
+                neighbors = [(x+1, y), (x-1, y), (x, y+1), (x, y-1)]
+                return [(x, y) for x, y in neighbors if (x, y) in self.__tile_history]
+
+            open_set = [(x, y)]
+            came_from = {}
+            g_score = {node: float('inf') for node in self.__tile_history}
+            g_score[(x, y)] = 0
+
+            while open_set:
+                current = min(open_set, key=lambda node: g_score[node] + heuristic(node))
+                if current == (x_target, y_target):
+                    path = [current]
+                    while current in came_from:
+                        current = came_from[current]
+                        path.append(current)
+                    path.reverse()
+                    return path
+
+                open_set.remove(current)
+                for neighbor in get_neighbors(current):
+                    tentative_g_score = g_score[current] + 1  # Assuming each move has a cost of 1
+                    if tentative_g_score < g_score[neighbor]:
+                        came_from[neighbor] = current
+                        g_score[neighbor] = tentative_g_score
+                        if neighbor not in open_set:
+                            open_set.append(neighbor)
+
+
+        else:
+            Path = self.__potential_path(x,y,[], x_target,y_target, 0)
+            print("Path to (", x_target, y_target, "): ")
+            print(Path)
+            if Path[-1][0] != x_target or Path[-1][1] != y_target:
+                self.__dest_node = (Path[-1][0],Path[-1][1])
+            return Path
+
+
             
     def __potential_path(self,x,y,memory,x_target,y_target, iteration):
         node = self.Node(x,y)
