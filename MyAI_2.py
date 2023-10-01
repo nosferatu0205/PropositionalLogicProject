@@ -40,13 +40,10 @@ class MyAI ( Agent ):
         self.__isInLoop = False
         pass
 
-    def getHome(self):
-        return self.__revert_home
-    def getAction( self, stench, breeze, glitter, bump, scream ):
-        self.__check_bump(bump)
+    def getAction( self, stench, breeze, glitter,scream ):
         self.__update_history_tiles()
         self.__moves+=1
-        return self.__determineAction(stench, breeze, glitter, bump, scream)
+        return self.__determineAction(stench, breeze, glitter, scream)
     class Node:
         def __init__(self, x,y):
             self.__node = (x,y)
@@ -98,13 +95,13 @@ class MyAI ( Agent ):
                 return False
         return True
 
-    def __Align_To_Wump(self,stench, breeze, glitter, bump, scream):
+    def __Align_To_Wump(self,stench, breeze, glitter,  scream):
         curNode = self.Node(self.__x_tile,self.__y_tile)
         nextNode = self.Node(self.__wump_node[0], self.__wump_node[1])
-        self.__print_debug_info(stench, breeze, glitter, bump, scream)
+        self.__print_debug_info(stench, breeze, glitter, scream)
         return self.__NodeToNode(nextNode,curNode)
         
-    def __determineAction(self,stench, breeze, glitter, bump, scream ):
+    def __determineAction(self,stench, breeze, glitter,  scream ):
         print("Dest Node: (", self.__dest_node, ") current node: ", self.__x_tile, self.__y_tile)
         if scream:
             if self.__wump_node == (0,0):
@@ -147,35 +144,23 @@ class MyAI ( Agent ):
                 self.__revert_home = False
         if self.__isInLoop == True: 
             print("**STILL IN LOOP**")
-            gotnode = self.getloopbreakingnode(stench, breeze, glitter, bump, scream)
-            return self.__go_to_dest(stench, breeze, glitter, bump, scream, gotnode[0], gotnode[1], False)
-        if not breeze and not bump:
+            gotnode = self.getloopbreakingnode(stench, breeze, glitter,  scream)
+            return self.__go_to_dest(stench, breeze, glitter,  scream, gotnode[0], gotnode[1], False)
+        if not breeze :
             if  not stench or (stench and self.__dead_wump):
                 self.__UpdateSafeTiles()
         if not self.__shot_arrow and self.__pitless_wump and not self.__dead_wump:
             if self.__Facing_Wump():
                 self.__shot_arrow = True
-                self.__print_debug_info(stench, breeze, glitter, bump, scream)
+                self.__print_debug_info(stench, breeze, glitter, scream)
                 return Agent.Action.SHOOT
             else:
-                return self.__Align_To_Wump(stench, breeze, glitter, bump, scream)
+                return self.__Align_To_Wump(stench, breeze, glitter, scream)
         if breeze:
             self.__Update_Potential_Pit_Locations()
         if stench and not self.__found_wump:
             self.__Update_Potential_Wump_Locations()
-        if (breeze or bump or (stench and not self.__dead_wump)):
-            if bump:
-                if self.__dir == 'E':
-                    self.__x_border = self.__x_tile
-                    for i in self.__safe_tiles:
-                        if i[0] > self.__x_border:
-                            self.__safe_tiles.remove(i)
-                elif self.__dir == 'N':
-                    self.__y_border = self.__y_tile
-                    for i in self.__safe_tiles:
-                        if i[1] > self.__y_border:
-                            self.__safe_tiles.remove(i)
-
+        if (breeze or  (stench and not self.__dead_wump)):
             if (not self.__in_danger) or (self.__in_danger and (self.__last_danger != (self.__x_tile,self.__y_tile)) or self.__dest_node not in self.__safe_tiles):
                 found_node = False
                 for i in range(len(self.__safe_tiles)):
@@ -202,7 +187,7 @@ class MyAI ( Agent ):
             self.__has_gold = True
             self.__revert_home = True
             self.__move_history.append("GRAB")
-            self.__print_debug_info(stench, breeze, glitter, bump, scream)
+            self.__print_debug_info(stench, breeze, glitter,  scream)
             return Agent.Action.GRAB
         elif self.__has_gold == True and self.__x_tile == 1 and self.__y_tile == 1: #ClimbToWin
             self.__move_history.append("CLIMB")
@@ -213,7 +198,7 @@ class MyAI ( Agent ):
             return self.__NodeToNode(nextNode,curNode)
         elif self.__moves == 1 and stench == True:
             self.__shot_arrow = True
-            self.__print_debug_info(stench, breeze, glitter, bump, scream)
+            self.__print_debug_info(stench, breeze, glitter,  scream)
             return Agent.Action.SHOOT
 
         elif self.__revert_home == True:
@@ -222,13 +207,13 @@ class MyAI ( Agent ):
                 self.__isInLoop = True
                 print("isinloop turned True")
                 self.__revert_home = False
-                gotnode = self.getloopbreakingnode(stench, breeze, glitter, bump, scream)
+                gotnode = self.getloopbreakingnode(stench, breeze, glitter,  scream)
                 self.__dest_node = (gotnode[0], gotnode[1])
-                return self.__go_to_dest(stench, breeze, glitter, bump, scream, gotnode[0], gotnode[1], True)
+                return self.__go_to_dest(stench, breeze, glitter,  scream, gotnode[0], gotnode[1], True)
 
             else:
                 destination = (1,1)
-                return self.__go_to_dest( stench, breeze, glitter, bump, scream, 1,1, True)
+                return self.__go_to_dest( stench, breeze, glitter, scream, 1,1, True)
 
 
         if self.__dest_node[0] == self.__x_tile and self.__dest_node[1] == self.__y_tile:
@@ -236,7 +221,7 @@ class MyAI ( Agent ):
                                 self.__dest_node[1] + (self.__dir_to_coordinate(self.__dir)[1]))
             curNode = self.Node(self.__x_tile,self.__y_tile)
             nextNode = self.Node(self.__dest_node[0], self.__dest_node[1])
-            self.__print_debug_info(stench, breeze, glitter, bump, scream)
+            self.__print_debug_info(stench, breeze, glitter,  scream)
             return self.__NodeToNode(nextNode,curNode)
         else:
             curNode = self.Node(self.__x_tile,self.__y_tile)
@@ -245,11 +230,11 @@ class MyAI ( Agent ):
                     index = i
                     break
             nextNode = self.Node(self.__dest_path[index+1][0],self.__dest_path[index+1][1])
-            self.__print_debug_info(stench, breeze, glitter, bump, scream)
+            self.__print_debug_info(stench, breeze, glitter, scream)
             return self.__NodeToNode(nextNode,curNode)
 
 
-    def __go_to_dest(self,stench, breeze, glitter, bump, scream, destx, desty, first_time):
+    def __go_to_dest(self,stench, breeze, glitter, scream, destx, desty, first_time):
         if (first_time == True):
             self.__dest_node = (destx, desty)
         if len(self.__path_home) == 0:
@@ -265,7 +250,7 @@ class MyAI ( Agent ):
                                 self.__dest_node[1] + (self.__dir_to_coordinate(self.__dir)[1]))
             curNode = self.Node(self.__x_tile,self.__y_tile)
             nextNode = self.Node(self.__dest_node[0], self.__dest_node[1])
-            self.__print_debug_info(stench, breeze, glitter, bump, scream)
+            self.__print_debug_info(stench, breeze, glitter, scream)
             self.__safe_tiles.append(self.__dest_node)
             return self.__NodeToNode(nextNode,curNode)
         curNode = self.Node(self.__x_tile,self.__y_tile)
@@ -294,19 +279,15 @@ class MyAI ( Agent ):
                 nextNode = self.Node(self.__dest_node[0], self.__dest_node[1])
                 
 
-        self.__print_debug_info(stench, breeze, glitter, bump, scream)
+        self.__print_debug_info(stench, breeze, glitter,  scream)
         return self.__NodeToNode(nextNode,curNode)
 
-    def getloopbreakingnode(self,stench, breeze, glitter, bump, scream): 
+    def getloopbreakingnode(self,stench, breeze, glitter,  scream):
         possiblenodes = []
         for i in range(len(self.__tile_history)):
             nodetile = self.__tile_history[len(self.__tile_history)-i-1]
-            # print("Nodetile: ")
-            # print(nodetile[0])
             gnode = self.Node(nodetile[0],nodetile[1])
             sidenode = gnode.getWest()
-
-            
 
             if sidenode[0]>=1 and sidenode not in self.__tile_history and sidenode not in possiblenodes: #Left
                 possiblenodes.append(sidenode)
@@ -356,7 +337,7 @@ class MyAI ( Agent ):
     def calcRisk(self, sidenode):
         risk = 0
         if sidenode in self.__breeze_nodes:
-            risk += 50
+            risk += 100
         if sidenode in self.__stench_nodes:
             risk += 100
         if sidenode in self.__safe_tiles:
@@ -734,16 +715,7 @@ class MyAI ( Agent ):
             return (-1,0)
         else:
             return (0,1)
-    
-    def __check_bump(self,bump):
-        if(bump==True):
-           self.__x_tile -= self.__dir_to_coordinate(self.__dir)[0]
-           self.__y_tile -= self.__dir_to_coordinate(self.__dir)[1]
-           if self.__dir == 'N':
-               self.__yBorder = self.__y_tile
-           elif self.__dir == 'E':
-               self.__xBorder = self.__x_tile
-            
+
     def __update_history_tiles(self):
         if len(self.__tile_history) == 0:
             self.__tile_history.append((self.__x_tile,self.__y_tile))
@@ -752,7 +724,7 @@ class MyAI ( Agent ):
         if (self.__x_tile,self.__y_tile) not in self.__safe_tiles:
             self.__safe_tiles.append((self.__x_tile,self.__y_tile))
 
-    def __print_debug_info(self, stench, breeze, glitter, bump, scream ):
+    def __print_debug_info(self, stench, breeze, glitter,  scream ):
         """
         print("\n---------Debug Info--------------------")
         print("DIRECTION: "+str(self.__dir))
@@ -764,7 +736,6 @@ class MyAI ( Agent ):
         print("STENCH: "+str(stench))
         print("BREEZE: "+str(breeze))
         print("GLITTER: "+str(glitter))
-        print("BUMP: "+str(bump))
         print("SCREAM: "+str(scream))
         print("XBoarder: "+ str(self.__x_border))
         print("YBoarder: "+str(self.__y_border ))

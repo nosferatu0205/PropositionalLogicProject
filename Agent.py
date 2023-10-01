@@ -15,5 +15,5 @@ class Agent ( metaclass=ABCMeta ):
         CLIMB      = 6
 
     @abstractmethod
-    def getAction ( self, stench, breeze, glitter, bump, scream):
+    def getAction ( self, stench, breeze, glitter, scream):
         pass

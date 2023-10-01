@@ -47,10 +47,6 @@ def show_msg_down(txt, screen, color=WHITE):
     pygame.display.update()
 
 def show_percept(tile, scream, screen):
-    # print('percept', scream)
-    pos = 0
-
-    icon_size = (SQUARE_LEN-30, SQUARE_LEN-30)
 
     dead_wump_img = IMAGES['dead_wumpus']
     gold_img = IMAGES['gold']
@@ -61,7 +57,6 @@ def show_percept(tile, scream, screen):
     if tile.stench: per+=1
     if tile.breeze: per+=1
     if tile.gold:   per+=1
-    # if scream: per+=1
 
     pos = -1*per//2
     if tile.stench: 
