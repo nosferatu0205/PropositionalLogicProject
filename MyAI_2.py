@@ -6,7 +6,7 @@ def randomInt ( limit ):
 
 class MyAI ( Agent ):
 
-    def __init__ ( self , numberOfGolds):
+    def __init__ ( self , numberOfGolds, arrows):
         self.__moves = 0
         self.__safe_tiles = []
         self.__unsafe_tiles = set()
@@ -38,6 +38,7 @@ class MyAI ( Agent ):
         self.__potential_pit_nodes = []
         self.__breeze_nodes = []
         self.__shot_arrow = False
+        self.__numberOfArrows = arrows
         self.__isInLoop = False
         pass
 
@@ -153,7 +154,9 @@ class MyAI ( Agent ):
                 self.__UpdateSafeTileManual(self.__x_tile, self.__y_tile)
         if not self.__shot_arrow and self.__pitless_wump and not self.__dead_wump:
             if self.__Facing_Wump():
-                self.__shot_arrow = True
+                self.__numberOfArrows-=1
+                if self.__numberOfArrows < 1 :
+                    self.__shot_arrow = True
                 self.__print_debug_info(stench, breeze, glitter, bump, scream)
                 return Agent.Action.SHOOT
             else:
@@ -213,7 +216,9 @@ class MyAI ( Agent ):
             nextNode = self.Node(2, 1)
             return self.__NodeToNode(nextNode,curNode)
         elif self.__moves == 1 and stench == True:
-            self.__shot_arrow = True
+            self.__numberOfArrows-=1
+            if self.__numberOfArrows < 1 :
+                self.__shot_arrow = True
             self.__print_debug_info(stench, breeze, glitter, bump, scream)
             return Agent.Action.SHOOT
 

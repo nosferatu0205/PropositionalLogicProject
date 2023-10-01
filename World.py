@@ -240,7 +240,7 @@ class World():
                 
             file.close()
         
-        self.__agent = MyAI(self.__numberOfGolds)
+        self.__agent = MyAI(self.__numberOfGolds, self.__numberOfArrows)
     
     def __addPit ( self, c, r ):
         if self.__isInBounds(c, r):
