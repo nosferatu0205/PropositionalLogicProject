@@ -27,6 +27,7 @@ class World():
         # Agent Initialization
         self.__goldLooted = False
         self.__hasArrow = True
+        self.__bump = False
         self.__scream = False
         self.__score = 0
         self.__agentDir = 0
@@ -77,10 +78,11 @@ class World():
                         
             # Get the move
             self.__lastAction = self.__agent.getAction (self.__board[self.__agentX][self.__agentY].stench,self.__board[self.__agentX][self.__agentY].breeze,
-														self.__board[self.__agentX][self.__agentY].gold, self.__scream)
+														self.__board[self.__agentX][self.__agentY].gold, self.__bump, self.__scream)
 
             # Make the move
             self.__score -= 1;
+            self.__bump   = False;
             self.__scream = False;
             
             if self.__lastAction == Agent.Action.TURN_LEFT:
@@ -102,7 +104,8 @@ class World():
                     self.__agentX -= 1
                 elif self.__agentDir == 3 and self.__agentY+1 < self.__rowDimension:
                     self.__agentY += 1
-
+                else:
+                    self.__bump = True
                     
                 if self.__board[self.__agentX][self.__agentY].pit or self.__board[self.__agentX][self.__agentY].wumpus:
                     self.__score -= 1000
@@ -355,6 +358,7 @@ class World():
         if self.__board[self.__agentX][self.__agentY].stench: perceptString += "Stench, "
         if self.__board[self.__agentX][self.__agentY].breeze: perceptString += "Breeze, "
         if self.__board[self.__agentX][self.__agentY].gold:   perceptString += "Glitter, "
+        if self.__bump:                         perceptString += "Bump, "
         if self.__scream:                       perceptString += "Scream"
         
         if perceptString[-1] == ' 'and perceptString[-2] == ',':
