@@ -1,5 +1,5 @@
 import numpy as np
-from main import WumpusWorld
+# from main import WumpusWorld
 # Define the size of the arrays
 WUMPUS_WORLD_SIZE = 10
 array_size = (WUMPUS_WORLD_SIZE, WUMPUS_WORLD_SIZE)

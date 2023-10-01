@@ -1,8 +1,7 @@
 import random
 import pygame
 import numpy
-import ai2
-import ai
+import DecisionMaker as ai2
 
 # Define constants
 WIDTH, HEIGHT = 800, 1000  # Increase the HEIGHT
@@ -20,13 +19,15 @@ BROWN = (139, 69, 19)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Wumpus World")
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 32)
 text = "Working?"
 restart_button = pygame.Rect(325, 900, 150, 50)
+change_view = pygame.Rect(60, 900, 180, 50)
 # text_box = pygame.Rect(300, 820, 200, 50)
 restart_color = BLACK
 IMAGES = {}
 wall_check = numpy.zeros((10,10), dtype=bool)
+show_wall = True
 
 
 arrows_display = pygame.Rect(575, 900, 150, 50)
@@ -268,18 +269,21 @@ class WumpusWorld:
                         screen.blit(IMAGES[img], rect_down)
                 pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                x = col * CELL_SIZE
-                y = row * CELL_SIZE
-                _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
-                if (row != 0 or col != 0) and wall_check[row,col] == False :
-                   screen.blit(IMAGES["wall"], _rect)
+        if show_wall:
+            for row in range(GRID_SIZE):
+                for col in range(GRID_SIZE):
+                    x = col * CELL_SIZE
+                    y = row * CELL_SIZE
+                    _rect = pygame.Rect(x, y, CELL_SIZE, CELL_SIZE)
+                    if (row != 0 or col != 0) and wall_check[row,col] == False :
+                       screen.blit(IMAGES["wall"], _rect)
         # pygame.draw.rect(screen, BLACK, text_box)
         # pygame.draw.rect(screen, GREEN, text_box, 2)
         self.draw_text2( BLACK ,text, 360, 825)
 
         # Draw the restart button
+        pygame.draw.rect(screen, restart_color, change_view)
+        pygame.draw.rect(screen, BLACK, change_view, 2)
         pygame.draw.rect(screen, restart_color, restart_button)
         pygame.draw.rect(screen, BLACK, restart_button, 2)
 
@@ -288,15 +292,15 @@ class WumpusWorld:
         self.draw_text(BLACK, f"Arrows Left: {self.arrows}", 575, 900)
 
         self.draw_text(BLACK, f"Gold remaining: {self.num_gold}", 575, 875)
-        self.draw_text(BLACK, f"Controls:", 25, 825)
+        # self.draw_text(BLACK, f"Controls:", 25, 825)
 
-        self.draw_text(BLACK, f"Navigation:", 25, 850)
+        # self.draw_text(BLACK, f"Navigation:", 25, 850)
 
-        self.draw_text(BLACK, f"Up - down - left - right", 25, 875)
-        self.draw_text(BLACK, f"G - pick up gold", 25, 900)
-        self.draw_text(BLACK, f"0 - Climb out", 25, 925)
-        self.draw_text(BLACK, f"Shoot Wumpus", 25, 950)
-        self.draw_text(BLACK, f"Press W, A, S, D while facing wumpus", 25, 975)
+        # self.draw_text(BLACK, f"Up - down - left - right", 25, 875)
+        # self.draw_text(BLACK, f"G - pick up gold", 25, 900)
+        # self.draw_text(BLACK, f"0 - Climb out", 25, 925)
+        # self.draw_text(BLACK, f"Shoot Wumpus", 25, 950)
+        # self.draw_text(BLACK, f"Press W, A, S, D while facing wumpus", 25, 975)
         
         #pygame.draw.rect(screen, WHITE, points_display)
         #pygame.draw.rect(screen, WHITE, points_display, 2)
@@ -308,7 +312,8 @@ class WumpusWorld:
         # percepts = self.get_percepts(self.agent_position)
         # #self.draw_text(BLACK, f"Percepts: {', '.join(percepts)}", 575, 825)
 
-        self.draw_text( GREEN ,"Restart", 360, 914)
+        self.draw_text( GREEN ,"Restart", 363, 914)
+        self.draw_text( GREEN ,"Change View", 76, 914)
 
     def print_world(self):
         for row in range(self.size):
@@ -459,6 +464,10 @@ if __name__ == "__main__":
                         world = WumpusWorld()
                         world.initialize()
                         text = "restarted"
+            
+                    elif change_view.collidepoint(event.pos):
+                        print("changed")
+                        show_wall = not show_wall
 
 
 
